@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Fonts Configuration */
+:root {
+  --font-inter: "Inter", sans-serif;
+  --font-hind-siliguri: "Hind Siliguri", sans-serif;
+}
+
+/* Apply Hind Siliguri for Bangla text and general body */
+* {
+  font-family: "Hind Siliguri", "Inter", sans-serif;
+}
+
+/* Apply Inter for English text (can be overridden with class) */
+.font-inter,
+code,
+pre {
+  font-family: "Inter", sans-serif;
+}
+
+/* Ensure body and html use the font */
+html,
+body {
+  font-family: "Hind Siliguri", "Inter", sans-serif;
+}
