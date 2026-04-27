@@ -39,7 +39,7 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4">
               <Link
                 to="/quizzes"
-                className=" btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-medium text-base py-3 rounded-xl "
+                className="btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-medium text-base py-3 rounded-xl "
               >
                 কুইজ দাও{" "}
                 <MdOutlineArrowOutward className="text-sm md:text-lg" />

@@ -150,7 +150,7 @@ const QuizList = ({ user }) => {
           <div className="absolute bottom-0 left-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
         </div>
 
-        <div className="container mx-auto px-4 relative z-10 flex flex-col md:flex-row items-center gap-2 md:gap-6 ">
+        <div className="container mx-auto px-2 md:px-4 relative z-10 flex flex-col md:flex-row items-center gap-2 md:gap-6 ">
           <div className="flex items-center gap-2 md:gap-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
               <MdQuiz className="text-4xl" />

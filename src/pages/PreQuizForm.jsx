@@ -6,11 +6,9 @@ import {
   FaCheckCircle,
   FaMapMarkerAlt,
   FaPlay,
-  FaSchool,
   FaTrophy,
-  FaUser,
 } from "react-icons/fa";
-import { MdError } from "react-icons/md";
+import { MdError, MdOutlineArrowOutward } from "react-icons/md";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "../utils/axios";
@@ -20,15 +18,15 @@ import {
 } from "../utils/profileValidation";
 
 const CLASS_OPTIONS = [
-  { value: "4", label: "চতুর্থ শ্রেণি (Class 4)" },
-  { value: "5", label: "পঞ্চম শ্রেণি (Class 5)" },
-  { value: "6", label: "ষষ্ঠ শ্রেণি (Class 6)" },
-  { value: "7", label: "সপ্তম শ্রেণি (Class 7)" },
-  { value: "8", label: "অষ্টম শ্রেণি (Class 8)" },
-  { value: "9", label: "নবম শ্রেণি (Class 9)" },
-  { value: "10", label: "দশম শ্রেণি (Class 10)" },
-  { value: "11", label: "একাদশ শ্রেণি (Class 11)" },
-  { value: "12", label: "দ্বাদশ শ্রেণি (Class 12)" },
+  { value: "4", label: "চতুর্থ শ্রেণি" },
+  { value: "5", label: "পঞ্চম শ্রেণি" },
+  { value: "6", label: "ষষ্ঠ শ্রেণি" },
+  { value: "7", label: "সপ্তম শ্রেণি" },
+  { value: "8", label: "অষ্টম শ্রেণি" },
+  { value: "9", label: "নবম শ্রেণি" },
+  { value: "10", label: "দশম শ্রেণি" },
+  { value: "11", label: "একাদশ শ্রেণি" },
+  { value: "12", label: "দ্বাদশ শ্রেণি" },
 ];
 
 const PreQuizForm = ({ user }) => {
@@ -567,10 +565,10 @@ const PreQuizForm = ({ user }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-4 md:py-8">
-      <div className="container mx-auto px-4 max-w-3xl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900  md:py-8">
+      <div className="container mx-auto md:px-4 max-w-3xl">
         {/* Top Section - Quiz Info */}
-        <div className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white rounded-2xl p-6 md:p-10 mb-6 shadow-2xl relative overflow-hidden border border-indigo-500/30">
+        <div className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white p-6 md:p-10 shadow-2xl relative overflow-hidden border border-indigo-500/30">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
           <div className="relative z-10">
             <h1 className="text-2xl md:text-3xl font-bold mb-2 leading-tight">
@@ -605,7 +603,7 @@ const PreQuizForm = ({ user }) => {
         </div>
 
         {/* Main Form Card */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50">
+        <div className="bg-white/95 backdrop-blur-sm shadow-2xl overflow-hidden border border-gray-200/50">
           {/* Form Header */}
           <div className="bg-gradient-to-r from-slate-50 to-indigo-50 border-b border-indigo-200 px-6 md:px-10 py-6">
             <div className="flex items-center gap-3">
@@ -614,10 +612,10 @@ const PreQuizForm = ({ user }) => {
               </div>
               <div>
                 <h2 className="text-xl md:text-2xl font-bold text-slate-800">
-                  অংশগ্রহণকারী তথ্য
+                  শিক্ষার্থীর তথ্য
                 </h2>
                 <p className="text-slate-600 text-xs md:text-sm mt-0.5">
-                  কুইজ শুরু করার আগে আপনার বিস্তারিত তথ্য পূরণ করুন
+                  কুইজ শুরু করার আগে নিচের ফর্মটি পূরণ করো
                   {studentInfo.studentName && (
                     <span className="inline-flex items-center gap-2 ml-2 text-green-600 font-semibold">
                       <FaCheckCircle className="text-sm" />
@@ -632,30 +630,9 @@ const PreQuizForm = ({ user }) => {
           {/* Form Content */}
           <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-6">
             {/* Important Note */}
-            <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 flex gap-3">
-              <div className="text-blue-600 text-lg flex-shrink-0 mt-0.5">
-                ℹ️
-              </div>
-              <div>
-                <p className="text-blue-900 font-semibold text-sm md:text-base">
-                  গুরুত্বপূর্ণ নোট
-                </p>
-                <p className="text-blue-800 text-xs md:text-sm mt-1">
-                  আপনার নাম এবং তথ্য লিডারবোর্ডে প্রদর্শিত হবে। সব ফিল্ড
-                  সঠিকভাবে পূরণ করুন।
-                </p>
-              </div>
-            </div>
 
             {/* Personal Information Section */}
             <div className="space-y-5">
-              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
-                  <FaUser className="text-lg" />
-                </div>
-                ব্যক্তিগত তথ্য
-              </h3>
-
               {/* নাম */}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -711,13 +688,6 @@ const PreQuizForm = ({ user }) => {
 
             {/* Educational Information Section */}
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600">
-                  <FaSchool className="text-lg" />
-                </div>
-                শিক্ষা তথ্য
-              </h3>
-
               {/* শিক্ষা প্রতিষ্ঠান */}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -851,11 +821,11 @@ const PreQuizForm = ({ user }) => {
             </div>
 
             {/* Action Buttons */}
-            <div className="pt-4 space-y-3 border-t border-slate-200 mt-8">
+            <div className="pt-4 flex items-center justify-between md:justify-end gap-4 border-slate-200 mt-8">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="btn btn-lg w-full gap-3 text-white font-bold rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 border-none shadow-lg hover:shadow-2xl transition-all disabled:opacity-50 disabled:shadow-none h-12 text-base"
+                className="btn bg-gradient-to-r px-4 from-purple-500 to-indigo-600 text-white font-medium text-base rounded-xl hover:from-indigo-700 hover:to-purple-700 border-none shadow-lg hover:shadow-2xl transition-all disabled:opacity-50 disabled:shadow-none"
               >
                 {isSubmitting ? (
                   <>
@@ -864,18 +834,18 @@ const PreQuizForm = ({ user }) => {
                   </>
                 ) : (
                   <>
-                    <FaPlay className="text-base" />
-                    কুইজ শুরু করুন
-                    <FaArrowRight className="text-base" />
+                    <FaPlay className="text-sm md:text-lg" />
+                    কুইজ শুরু করো
                   </>
                 )}
               </button>
 
               <Link
                 to="/quizzes"
-                className="btn btn-lg w-full rounded-lg font-bold border-slate-300 hover:bg-slate-100 h-12 text-base"
+                className="btn px-4 rounded-xl  bg-purple-600 text-white border-purple-600 font-semibold"
               >
-                ফিরে যান
+                ফিরে যাও
+                <MdOutlineArrowOutward className="text-sm md:text-lg" />
               </Link>
             </div>
           </form>
