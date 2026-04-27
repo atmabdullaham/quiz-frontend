@@ -26,7 +26,7 @@ const Testimonials = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-12 md:py-20">
+    <div className="container mx-auto px-2 md:px-4 py-12 md:py-20">
       <h2 className="text-2xl md:text-4xl font-bold text-center mb-8 md:mb-16 text-gray-800 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3">
         <FaUsers className="text-purple-700" /> সদস্যদের মতামত
       </h2>

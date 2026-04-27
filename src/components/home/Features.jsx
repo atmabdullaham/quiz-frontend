@@ -28,7 +28,7 @@ const Features = () => {
   ];
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white py-12 md:py-20">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-2 md:px-4">
         <h2 className="text-2xl md:text-4xl font-bold text-center mb-8 md:mb-16 text-gray-800">
           আমরা কী প্রদান করি
         </h2>
@@ -36,7 +36,7 @@ const Features = () => {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="bg-white p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border border-gray-100"
+              className="bg-white p-6 md:p-8 rounded-2xl shadow-lg  border-gray-100"
             >
               <div className="flex justify-center mb-4">{feature.icon}</div>
               <h3 className="text-xl font-bold mb-3 text-gray-800 text-center">

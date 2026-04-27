@@ -25,8 +25,8 @@ const OurActivities = () => {
     },
   ];
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-purple-50 py-12 md:py-20">
-      <div className="container mx-auto px-4">
+    <div className="bg-gradient-to-r from-blue-100 to-purple-100 py-12 md:py-20 relative overflow-hidden">
+      <div className="container mx-auto px-2 md:px-4">
         <h2 className="text-2xl md:text-4xl font-bold text-center mb-8 md:mb-16 text-gray-800">
           আমাদের কার্যক্রম
         </h2>
@@ -34,7 +34,7 @@ const OurActivities = () => {
           {events.map((event) => (
             <div
               key={event.id}
-              className="bg-white rounded-2xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-l-4 border-blue-700"
+              className="bg-white rounded-2xl p-4 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-l-4 border-blue-700"
             >
               <div className="text-5xl md:text-6xl mb-4 md:mb-6">
                 {event.icon}
@@ -43,7 +43,9 @@ const OurActivities = () => {
                 {event.title}
               </h3>
               <div className="space-y-3 text-gray-700">
-                <p className="text-sm leading-relaxed">{event.details}</p>
+                <p className="text-sm leading-relaxed text-justify">
+                  {event.details}
+                </p>
               </div>
             </div>
           ))}

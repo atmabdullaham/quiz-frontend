@@ -1,4 +1,4 @@
-import { FaArrowRight } from "react-icons/fa";
+import { MdOutlineArrowOutward } from "react-icons/md";
 import { Link } from "react-router-dom";
 import logoImg from "../../assets/logo3.jpg";
 
@@ -7,16 +7,16 @@ const Hero = () => {
     <div className="hero min-h-[60vh] bg-gradient-to-br from-blue-700 via-purple-700 to-indigo-800 relative overflow-visible pb-24">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-10 left-5 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-10 left-5 md:w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
         <div
-          className="absolute bottom-10 right-5 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"
+          className="absolute bottom-10 right-5 md:w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"
           style={{ animationDelay: "1s" }}
         ></div>
       </div>
 
       {/* Content */}
-      <div className="hero-content relative z-10 w-full text-center md:text-left py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto px-4">
+      <div className="hero-content px-2 relative z-10 w-full text-center  md:text-left py-6 md:py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 items-center w-full max-w-7xl mx-auto px-4">
           {/* Left Content */}
           <div className="text-white space-y-6">
             <div className="space-y-3">
@@ -28,7 +28,7 @@ const Hero = () => {
               </p>
             </div>
 
-            <p className="text-lg md:text-xl text-white/80 leading-relaxed max-w-md">
+            <p className="text-lg md:text-xl text-white/80 leading-relaxed md:max-w-md text-justify">
               পড়ালেখার পাশাপাশি জ্ঞানের ভাণ্ডারকে আরো সমৃদ্ধ করতে কিশোরকণ্ঠ পাঠক
               ফোরাম চট্টগ্রাম মহানগর উত্তর প্রতি মাসের শেষ সপ্তাহে মাসিক নতুন
               কিশোরকন্ঠের উপর "কিশোরকন্ঠ মাসিক পাঠ প্রতিযোগিতা" র আয়োজন করে।
@@ -39,15 +39,17 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4">
               <Link
                 to="/quizzes"
-                className="btn btn-sm md:btn-lg btn-primary gap-2 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                className=" btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-medium text-base py-3 rounded-xl "
               >
-                কুইজ দাও <FaArrowRight className="text-sm md:text-lg" />
+                কুইজ দাও{" "}
+                <MdOutlineArrowOutward className="text-sm md:text-lg" />
               </Link>
               <Link
                 to="/login"
-                className="btn btn-sm md:btn-lg btn-success gap-2 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all text-white"
+                className="btn px-4 py-3 rounded-xl  bg-purple-600 text-white border-purple-600 font-semibold"
               >
-                সদস্য হও <FaArrowRight className="text-sm md:text-lg" />
+                সদস্য হও
+                <MdOutlineArrowOutward className="text-sm md:text-lg" />
               </Link>
             </div>
           </div>

@@ -231,7 +231,7 @@ const QuizList = ({ user }) => {
                 return (
                   <div
                     key={quiz._id}
-                    className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-2 -translate-y-1 bg-white shadow-md"
+                    className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg  bg-white shadow-md"
                   >
                     {/* Card Background Gradient */}
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
@@ -319,14 +319,14 @@ const QuizList = ({ user }) => {
                             {user ? (
                               <button
                                 onClick={() => handleStartQuiz(quiz._id)}
-                                className="flex-1 btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold text-lg py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-purple-400/50 hover:scale-[1.02] active:scale-[0.98]"
+                                className="flex-1 btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-medium text-base py-3 rounded-xl transition-all duration-300  hover:shadow-purple-400/50 "
                               >
                                 🚀 শুরু করো
                               </button>
                             ) : (
                               <button
                                 onClick={() => {
-                                  toast.error("কুইজ শুরু করতে লগইন করুন");
+                                  toast.error("কুইজ শুরু করতে লগইন করো");
                                   navigate("/login");
                                 }}
                                 className="flex-1 btn bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-lg py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-400/50 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
