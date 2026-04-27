@@ -165,15 +165,15 @@ const QuizList = ({ user }) => {
           <div className="absolute bottom-0 left-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
         </div>
 
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto px-4 relative z-10 flex flex-col md:flex-row items-center gap-10">
           <div className="flex items-center gap-4 mb-4">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
               <MdQuiz className="text-4xl" />
             </div>
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold">Quiz Challenge</h1>
+              <h1 className="text-3xl md:text-4xl font-bold">কুইজ</h1>
               <p className="text-white/90 text-lg mt-1">
-                Test your skills and compete with others
+                কিশোরকন্ঠ পাঠ প্রতিযোগিতা
               </p>
             </div>
           </div>
@@ -181,9 +181,11 @@ const QuizList = ({ user }) => {
           {user ? (
             <div className="mt-6 p-4 bg-white/10 backdrop-blur-sm rounded-xl inline-block border border-white/20">
               <p className="text-white font-semibold flex items-center gap-2">
-                <span className="text-2xl">✅</span>
-                Welcome back,{" "}
-                <span className="text-yellow-200">{user.name}</span>!
+                স্বাগতম,{" "}
+                <span className="text-yellow-200">
+                  {user.name.split(" ")[user.name.split(" ").length - 1]}
+                </span>
+                !
               </p>
             </div>
           ) : (
@@ -215,19 +217,17 @@ const QuizList = ({ user }) => {
               <MdQuiz className="text-8xl text-gray-400" />
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">
-              No Quizzes Available Yet
+              কুইজ এখনও শুরু হয়নি
             </h2>
             <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
-              The quiz section is currently empty. Check back soon for exciting
-              quizzes and challenges!
+              কুইজ শুরু হওয়ার সময় জানতে নোটিশ দেখো ।
             </p>
             <div className="space-y-3">
-              <p className="text-gray-500 text-base">💡 You can:</p>
               <Link
                 to="/"
                 className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors"
               >
-                Explore Other Sections
+                হোম
               </Link>
             </div>
           </div>
@@ -242,7 +242,7 @@ const QuizList = ({ user }) => {
                     (q) => getQuizStatusBangladesh(q).text === "Active",
                   ).length
                 }{" "}
-                Active
+                এক্টিভ
               </div>
               <div className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold flex items-center gap-2">
                 <FaClock className="text-blue-600" />
@@ -251,7 +251,7 @@ const QuizList = ({ user }) => {
                     (q) => getQuizStatusBangladesh(q).text === "Upcoming",
                   ).length
                 }{" "}
-                Upcoming
+                আসন্ন
               </div>
             </div>
 
@@ -264,6 +264,7 @@ const QuizList = ({ user }) => {
                 const endTime = formatTime(quiz.endDate);
                 const startDate = formatDate(quiz.startDate);
                 const endDate = formatDate(quiz.endDate);
+                // const subtitle = quiz(quiz.subtitle);
 
                 return (
                   <div
