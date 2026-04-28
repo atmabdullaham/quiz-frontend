@@ -58,15 +58,15 @@ const QuizResult = ({ user }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 md:py-4 py-6 px-2 md:px-4">
       <div className="container mx-auto max-w-4xl">
         {/* Header Section */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-4 md:mb-6">
           <div className="mb-8 animate-fade-in">
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-3">
+            <h1 className="text-3xl md:text-4xl font-medium md:font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-3">
               Quiz Complete!
             </h1>
-            <p className="text-xl text-purple-200">আপনার ফলাফল প্রস্তুত</p>
+            <p className="text-xl text-purple-200">আপনার ফলাফল</p>
           </div>
         </div>
 
@@ -119,9 +119,6 @@ const QuizResult = ({ user }) => {
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <div className="text-5xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
                       {percentage}%
-                    </div>
-                    <div className="text-sm text-purple-300 mt-1">
-                      সম্পূর্ণতা
                     </div>
                   </div>
                 </div>
@@ -248,12 +245,8 @@ const QuizResult = ({ user }) => {
             <div className="flex items-start gap-4">
               <div className="text-2xl">📝</div>
               <div>
-                <h4 className="text-lg font-semibold text-yellow-100 mb-2">
-                  উত্তর লক করা হয়েছে
-                </h4>
                 <p className="text-yellow-100">
-                  আপনার বিস্তারিত উত্তর প্রশাসক দ্বারা ফলাফল প্রকাশ করার পরে
-                  দেখা যাবে।
+                  ফলাফল প্রকাশ করার পরে, সঠিক উত্তর দেখা যাবে।
                 </p>
               </div>
             </div>
@@ -278,17 +271,6 @@ const QuizResult = ({ user }) => {
         </div>
 
         {/* Motivational Message */}
-        <div className="mt-12 text-center">
-          <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-8 bg-opacity-10 border border-purple-500 border-opacity-30">
-            <p className="text-lg text-purple-200 italic">
-              {percentage >= 80
-                ? "🎉 দারুণ! আপনি চমৎকার পারফরম্যান্স দেখিয়েছেন!"
-                : percentage >= 60
-                  ? "👍 ভালো করেছেন! আরও উন্নতির জন্য অনুশীলন চালিয়ে যান।"
-                  : "💪 হার মানবেন না! বিষয়বস্তু পুনরায় পর্যালোচনা করুন এবং পুনায় চেষ্টা করুন।"}
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );

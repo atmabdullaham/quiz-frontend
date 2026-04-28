@@ -46,21 +46,12 @@ const TakeQuiz = ({ user }) => {
       } else {
         toast.success("Quiz submitted successfully!");
       }
+
       navigate(`/quiz/${id}/result`);
     },
     onError: (error) => {
       const errorMsg = error.response?.data?.message || "Failed to submit quiz";
-      if (errorMsg.includes("already submitted")) {
-        toast.error(
-          "You have already submitted this quiz. No retakes allowed.",
-        );
-      } else if (errorMsg.includes("Duplicate")) {
-        toast.error(
-          "Duplicate submission detected. Check your previous submission.",
-        );
-      } else {
-        toast.error(errorMsg);
-      }
+      toast.error(errorMsg);
     },
   });
 

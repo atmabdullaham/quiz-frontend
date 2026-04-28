@@ -42,7 +42,6 @@ const NoticeMarquee = ({ displayLocation = "all" }) => {
                 key={idx}
                 className="ml-2 text-xs md:text-sm font-normal text-gray-800 flex items-center gap-2"
               >
-                <span className="font-medium">{notice.title}:</span>
                 <span className="text-gray-700">{notice.content}</span>
               </div>
             ))}

@@ -8,7 +8,7 @@ import {
   FaPlay,
   FaTrophy,
 } from "react-icons/fa";
-import { MdError, MdOutlineArrowOutward } from "react-icons/md";
+import { MdError } from "react-icons/md";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "../utils/axios";
@@ -61,6 +61,7 @@ const PreQuizForm = ({ user }) => {
     data: checkData,
     isLoading: checkingSubmission,
     error: checkError,
+    refetch: refetchSubmissionCheck,
   } = useQuery({
     queryKey: ["check-submission", id, user?.email],
     queryFn: async () => {
@@ -74,6 +75,7 @@ const PreQuizForm = ({ user }) => {
     },
     retry: 1,
     gcTime: 0,
+    staleTime: 0, // BUGFIX: Ensure query is always considered stale, forces refetch
     enabled: !!user, // Only run for authenticated users
   });
 
@@ -840,13 +842,13 @@ const PreQuizForm = ({ user }) => {
                 )}
               </button>
 
-              <Link
+              {/* <Link
                 to="/quizzes"
                 className="btn px-4 rounded-xl  bg-purple-600 text-white border-purple-600 font-semibold"
               >
                 ফিরে যাও
                 <MdOutlineArrowOutward className="text-sm md:text-lg" />
-              </Link>
+              </Link> */}
             </div>
           </form>
         </div>
