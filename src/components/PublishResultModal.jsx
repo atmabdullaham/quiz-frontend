@@ -9,6 +9,7 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
   const [loading, setLoading] = useState(false);
   const [preparing, setPreparing] = useState(true);
   const [error, setError] = useState("");
+  const [topCount, setTopCount] = useState(10); // Default top 10
 
   useEffect(() => {
     prepareResults();
@@ -40,8 +41,8 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
         className: sub.userId?.profile?.className || "Unknown",
         rollNumber: sub.userId?.profile?.rollNumber || "",
       }));
-      setCandidates(mapped.slice(0, 15)); // Top 15 candidates
-      setSelectedWinners(mapped.slice(0, 10)); // Default top 10 winners
+      setCandidates(mapped); // Store all candidates
+      setSelectedWinners(mapped.slice(0, topCount)); // Default to topCount
       setError("");
     } catch (err) {
       console.error("Error preparing results:", err);
@@ -58,6 +59,14 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
 
   const handleRemoveCandidate = (id) => {
     setSelectedWinners(selectedWinners.filter((c) => c._id !== id));
+  };
+
+  const handleTopCountChange = (e) => {
+    const newCount = parseInt(e.target.value) || 10;
+    const maxCount = candidates.length;
+    const validCount = Math.min(Math.max(newCount, 1), maxCount);
+    setTopCount(validCount);
+    setSelectedWinners(candidates.slice(0, validCount));
   };
 
   const handlePublish = async () => {
@@ -124,6 +133,26 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
           করুন। নির্বাচিত প্রতিটি বিজয়ীর উত্তর আনলক করা হবে।
         </p>
       </div>
+
+      {/* Top Count Selector */}
+      {!preparing && candidates.length > 0 && (
+        <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg flex items-center gap-4">
+          <label className="font-semibold text-purple-900">
+            শীর্ষ বিজয়ী সংখ্যা:
+          </label>
+          <input
+            type="number"
+            min="1"
+            max={candidates.length}
+            value={topCount}
+            onChange={handleTopCountChange}
+            className="input input-sm input-bordered w-20 text-center"
+          />
+          <span className="text-sm text-purple-700">
+            (সর্বোচ্চ: {candidates.length})
+          </span>
+        </div>
+      )}
 
       {/* Loading State */}
       {preparing && (
