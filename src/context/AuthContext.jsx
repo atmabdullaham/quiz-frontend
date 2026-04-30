@@ -51,9 +51,14 @@ export const AuthProvider = ({ children }) => {
             },
           );
 
+          console.log("✅ POST /auth/register returned:", data);
+          console.log("   Email:", data?.email);
+          console.log("   Role:", data?.role);
+          console.log("   All fields:", Object.keys(data || {}));
+          
           setDbUser(data);
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          console.error("❌ Error in auth register:", error);
           toast.error("Failed to sync user data");
         }
       } else {

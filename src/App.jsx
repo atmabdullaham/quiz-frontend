@@ -15,6 +15,8 @@ import Results from "./pages/Results";
 import StudentDashboard from "./pages/StudentDashboard";
 import TakeQuiz from "./pages/TakeQuiz";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminDebug from "./pages/admin/AdminDebug2";
+import AdminSetup from "./pages/admin/AdminSetup";
 import CreateQuiz from "./pages/admin/CreateQuiz";
 import EditQuiz from "./pages/admin/EditQuiz";
 import QuizStats from "./pages/admin/QuizStats";
@@ -22,6 +24,11 @@ import QuizStats from "./pages/admin/QuizStats";
 function AppContent() {
   const { dbUser, loading } = useAuth();
   const location = useLocation();
+
+  console.log("🔍 App Debug - dbUser:", dbUser);
+  console.log("🔍 App Debug - dbUser?.role:", dbUser?.role);
+  console.log("🔍 App Debug - loading:", loading);
+  console.log("🔍 App Debug - Current path:", location.pathname);
 
   // Check if current route is a dashboard route
   const isDashboardRoute =
@@ -72,10 +79,21 @@ function AppContent() {
             element={
               !dbUser ? (
                 <Navigate to="/login" />
-              ) : dbUser.role === "admin" ? (
-                <AdminDashboard />
               ) : (
-                <StudentDashboard />
+                (() => {
+                  console.log("🔀 /dashboard route check:", {
+                    hasDbUser: !!dbUser,
+                    role: dbUser?.role,
+                    roleType: typeof dbUser?.role,
+                    isAdmin: dbUser?.role === "admin",
+                    email: dbUser?.email
+                  });
+                  return dbUser.role === "admin" ? (
+                    <AdminDashboard />
+                  ) : (
+                    <StudentDashboard />
+                  );
+                })()
               )
             }
           />
@@ -106,6 +124,14 @@ function AppContent() {
             element={
               dbUser?.role === "admin" ? <QuizStats /> : <Navigate to="/" />
             }
+          />
+          <Route
+            path="/admin/setup"
+            element={<AdminSetup />}
+          />
+          <Route
+            path="/admin/debug"
+            element={<AdminDebug />}
           />
         </Routes>
       </div>

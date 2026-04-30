@@ -66,14 +66,6 @@ const DashboardSummary = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl p-8 shadow-lg">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">
-          স্বাগতম, প্রশাসক
-        </h1>
-        <p className="text-white/90 text-lg">
-          আপনার কুইজ প্ল্যাটফর্ম পরিচালনা করুন এবং অগ্রগতি ট্র্যাক করুন
-        </p>
-      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -100,7 +92,7 @@ const DashboardSummary = () => {
       {/* Quick Status */}
       <div className="glass-card p-6">
         <h2 className="text-xl font-bold text-gray-800 mb-4">
-          দ্রুত পরিস্থিতি
+          কুইজ ও ফলাফলের সারসংক্ষেপ
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 border-l-4 border-blue-500 bg-blue-50 rounded">

@@ -6,8 +6,17 @@ import NoticeManager from "../../components/NoticeManager";
 import QuizzesSection from "../../components/QuizzesSection";
 import ResultsSection from "../../components/ResultsSection";
 import StudentsSection from "../../components/StudentsSection";
+import { useAuth } from "../../context/AuthContext";
 
 const AdminDashboard = () => {
+  const { dbUser } = useAuth();
+  console.log(
+    "✅ AdminDashboard rendered for user:",
+    dbUser?.email,
+    "role:",
+    dbUser?.role,
+  );
+
   const [activeTab, setActiveTab] = useState("summary");
 
   const tabs = [
@@ -64,9 +73,9 @@ const AdminDashboard = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`btn btn-sm md:btn-md gap-2 whitespace-nowrap transition-all ${
+              className={`btn btn-sm md:btn-md gap-2 px-2 border transition-all ${
                 activeTab === tab.id
-                  ? "btn-primary shadow-lg"
+                  ? "btn-primary border-purple-500 shadow-lg"
                   : "btn-outline hover:shadow-md"
               }`}
             >
