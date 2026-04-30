@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaChartBar, FaEdit, FaEye, FaPlus, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -11,6 +11,16 @@ import PublishResultModal from "./PublishResultModal";
 const QuizzesSection = () => {
   const queryClient = useQueryClient();
   const [selectedQuizForPublish, setSelectedQuizForPublish] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dialogRef = useRef(null);
+
+  useEffect(() => {
+    if (isModalOpen && dialogRef.current) {
+      dialogRef.current.showModal();
+    } else if (!isModalOpen && dialogRef.current) {
+      dialogRef.current.close();
+    }
+  }, [isModalOpen]);
 
   const { data: quizzes, isLoading } = useQuery({
     queryKey: ["admin-quizzes"],
@@ -109,9 +119,7 @@ const QuizzesSection = () => {
                   <button
                     onClick={() => {
                       setSelectedQuizForPublish(quiz);
-                      document
-                        .getElementById("publish_result_modal")
-                        ?.showModal();
+                      setIsModalOpen(true);
                     }}
                     className="btn btn-sm btn-warning gap-2 flex-1 sm:flex-none"
                     title="ফলাফল প্রকাশ করুন"
@@ -154,15 +162,31 @@ const QuizzesSection = () => {
 
       {/* Publish Result Modal */}
       {selectedQuizForPublish && (
-        <PublishResultModal
-          quizId={selectedQuizForPublish._id}
-          quizTitle={selectedQuizForPublish.title}
-          onClose={() => setSelectedQuizForPublish(null)}
-          onPublished={() => {
-            queryClient.invalidateQueries(["admin-quizzes"]);
-            setSelectedQuizForPublish(null);
-          }}
-        />
+        <dialog ref={dialogRef} id="publish_result_modal" className="modal">
+          <PublishResultModal
+            quizId={selectedQuizForPublish._id}
+            quizTitle={selectedQuizForPublish.title}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedQuizForPublish(null);
+            }}
+            onPublished={() => {
+              queryClient.invalidateQueries(["admin-quizzes"]);
+              setIsModalOpen(false);
+              setSelectedQuizForPublish(null);
+            }}
+          />
+          <form method="dialog" className="modal-backdrop">
+            <button
+              onClick={() => {
+                setIsModalOpen(false);
+                setSelectedQuizForPublish(null);
+              }}
+            >
+              close
+            </button>
+          </form>
+        </dialog>
       )}
     </div>
   );
