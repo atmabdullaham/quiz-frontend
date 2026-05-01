@@ -203,16 +203,16 @@ const TakeQuiz = ({ user }) => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6 md:py-8">
+      <main className="container mx-auto md:px-4 md:py-8">
         {currentQuestion && (
           <div className="max-w-3xl mx-auto">
             {/* Question Card */}
-            <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 mb-8 transform hover:scale-[1.01] transition-transform duration-300">
+            <div className="bg-white md:rounded-2xl  p-6 md:p-8 mb-8 transform transition-transform duration-300">
               {/* Question Number and Answered Badge */}
-              <div className="flex items-start justify-between gap-4 mb-6">
+              <div className="flex items-start justify-between gap-4 mb-2 md:mb-6">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-lg md:text-xl flex items-center justify-center shadow-lg">
+                    <div className="w-6 h-6 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-lg md:text-xl flex items-center justify-center shadow-lg">
                       {globalIndex + 1}
                     </div>
                   </div>
@@ -231,7 +231,7 @@ const TakeQuiz = ({ user }) => {
               </div>
 
               {/* Question Text */}
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-8 leading-relaxed">
+              <h2 className="text-lg md:text-2xl font-bold text-slate-900 mb-8 leading-relaxed">
                 {currentQuestion.question}
               </h2>
 
@@ -252,10 +252,10 @@ const TakeQuiz = ({ user }) => {
                       />
                       <label
                         htmlFor={`option-${globalIndex}-${oIndex}`}
-                        className="block peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-purple-500 cursor-pointer"
+                        className="block  peer-checked:ring-offset-2 peer-checked:ring-purple-500 cursor-pointer"
                       >
                         <div
-                          className={`p-4 md:p-6 rounded-xl border-2 transition-all duration-200 transform hover:scale-[1.02] ${
+                          className={`p-4 md:p-6 rounded-xl border-2 transition-all duration-200 transform] ${
                             isSelected
                               ? "bg-gradient-to-r from-indigo-50 to-purple-50 border-purple-500 shadow-lg"
                               : "bg-slate-50 border-slate-200 hover:border-purple-300 hover:bg-indigo-50/50"
@@ -299,7 +299,7 @@ const TakeQuiz = ({ user }) => {
 
             {/* Navigation and Action Buttons */}
             <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 sticky bottom-4 md:bottom-6 border-t-4 border-gradient-to-r from-indigo-500 to-purple-600">
-              <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+              <div className="flex flex-row gap-4 items-center justify-between">
                 {/* Previous Button */}
                 <button
                   onClick={() =>
@@ -312,17 +312,17 @@ const TakeQuiz = ({ user }) => {
                 </button>
 
                 {/* Question Counter for Mobile */}
-                <div className="md:hidden text-center">
+                {/* <div className="md:hidden text-center">
                   <p className="text-sm text-slate-600">
                     {answeredCount}/{totalQuestions} answered
                   </p>
                   <p className="text-sm font-bold text-slate-900">
                     {currentPage + 1}/{totalQuestions}
                   </p>
-                </div>
+                </div> */}
 
                 {/* Page Counter - Hidden on Mobile */}
-                <div className="hidden md:block text-center">
+                <div className=" md:block text-center">
                   <p className="text-sm text-slate-600 font-medium">
                     Question {currentPage + 1} of {totalQuestions}
                   </p>
@@ -332,7 +332,7 @@ const TakeQuiz = ({ user }) => {
                 {currentPage < totalQuestions - 1 ? (
                   <button
                     onClick={() => setCurrentPage((prev) => prev + 1)}
-                    className="w-full md:w-auto px-6 py-3 rounded-xl font-semibold gradient-to-r from-purple-500 to-indigo-600 text-white bg-gradient-to-r from-purple-500 to-indigo-600 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-sm md:text-base"
+                    className="w-full md:w-auto px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-purple-500 to-indigo-600 text-white  hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-sm md:text-base"
                   >
                     Next →
                   </button>

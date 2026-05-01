@@ -63,7 +63,7 @@ const Login = () => {
             <button
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="btn btn-lg w-full bg-purple-100 text-purple-600 border-0 gap-3 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed mb-4 font-semibold"
+              className="btn btn-lg w-full bg-purple-100 text-pink-600 border-0 gap-3 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed mb-4 font-semibold"
             >
               {loading ? (
                 <>

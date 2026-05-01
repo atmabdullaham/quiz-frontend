@@ -120,7 +120,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="border-t border-gray-800 pt-6 md:pt-8">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 md:gap-6 text-gray-400 text-xs md:text-sm">
-            <p>© ২০२६ কিশোরকণ্ঠ পাঠক ফোরাম। সর্বাধিকার সংরক্ষিত।</p>
+            <p>© কিশোরকণ্ঠ পাঠক ফোরাম, চট্টগ্রাম মহানগর উত্তর</p>
             <div className="flex gap-6">
               <a
                 href="https://www.facebook.com/people/%E0%A6%95%E0%A6%BF%E0%A6%B6%E0%A7%8B%E0%A6%B0%E0%A6%95%E0%A6%A8%E0%A7%8D%E0%A6%A0-%E0%A6%AA%E0%A6%BE%E0%A6%A0%E0%A6%95-%E0%A6%AB%E0%A7%8B%E0%A6%B0%E0%A6%BE%E0%A6%AE-%E0%A6%9A%E0%A6%9F%E0%A7%8D%E0%A6%9F%E0%A6%97%E0%A7%8D%E0%A6%B0%E0%A6%BE%E0%A6%AE-%E0%A6%AE%E0%A6%B9%E0%A6%BE%E0%A6%A8%E0%A6%97%E0%A6%B0-%E0%A6%89%E0%A6%A4%E0%A7%8D%E0%A6%A4%E0%A6%B0/61555590345773/"
