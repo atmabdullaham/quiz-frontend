@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import {
-  FaArrowRight,
   FaBookOpen,
   FaCalendarAlt,
   FaCheck,
@@ -286,42 +285,44 @@ const StudentDashboard = () => {
           </div>
         </div>
       </div>
-
-      <div className="container mx-auto px-3 sm:px-4 py-6 md:py-12 space-y-6 md:space-y-8">
-        {/* <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
-          {quickStats.map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6 hover:shadow-xl transition-shadow"
-            >
-              <div className="flex items-center justify-between gap-3 mb-3 sm:mb-4">
-                <div className={`${stat.bgColor} p-2.5 sm:p-3 rounded-xl`}>
-                  <div className={stat.textColor}>{stat.icon}</div>
-                </div>
-                <div
-                  className={`text-2xl sm:text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
-                >
-                  {stat.value}
-                </div>
-              </div>
-              <p className="text-xs sm:text-sm font-semibold text-gray-700 leading-snug">
-                {stat.label}
-              </p>
+      <div className="bg-slate-900  p-4 sm:p-6 md:p-8 text-white overflow-hidden relative">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-500 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-pink-500 rounded-full blur-3xl"></div>
+        </div>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-evenly gap-4">
+          {/* V2: Statistics Section */}
+          <button className="">
+            অংশগ্রহণকৃত কুইজ
+            <div className="badge badge-sm badge-secondary ml-2">
+              {statistics.totalQuizzesAttempted || 0}
             </div>
-          ))}
-        </div> */}
+          </button>
+          <button className="">
+            অর্জিত পয়েন্টস
+            <div className="badge badge-sm badge-secondary ml-2">
+              {statistics.totalPoints || 0}
+            </div>
+          </button>
+          <button className="">
+            পুরস্কার অর্জন
+            <div className="badge badge-sm badge-secondary ml-2">
+              {statistics.quizzesWon || 0}
+            </div>
+          </button>
+        </div>
+      </div>
 
+      <div className="container  mx-auto md:px-4 md:py-12 space-y-6 md:space-y-8">
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <div className="xl:col-span-2 bg-white rounded-3xl shadow-lg border border-gray-100 p-4 sm:p-6 md:p-8">
+          <div className="xl:col-span-2 bg-gradient-to-r from-blue-100 to-purple-100  md:rounded-3xl border border-gray-100 p-4 sm:p-6 md:p-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                  Student Profile
+                  My Profile
                 </h2>
                 <p className="text-sm sm:text-base text-gray-600 mt-1">
-                  {isEditMode
-                    ? "প্রোফাইল সম্পাদনা করুন"
-                    : "আপনার তথ্য আপডেট রাখুন"}
+                  {isEditMode ? "প্রোফাইল এডিট করো" : "প্রোফাইল আপডেট রাখো"}
                 </p>
               </div>
               <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
@@ -551,7 +552,7 @@ const StudentDashboard = () => {
             )}
           </div>
 
-          <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-4 sm:p-6 md:p-8">
+          <div className="bg-gradient-to-r from-blue-100 to-purple-100 md:rounded-3xl border border-gray-100 p-4 sm:p-6 md:p-8">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">
               Account Overview
             </h2>
@@ -570,36 +571,7 @@ const StudentDashboard = () => {
               />
             </div>
 
-            {/* V2: Statistics Section */}
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                📊 Your Statistics
-              </h3>
-              <div className="space-y-3">
-                <StatRow
-                  label="Quizzes Attempted"
-                  value={statistics.totalQuizzesAttempted || 0}
-                />
-                <StatRow
-                  label="Total Points Earned"
-                  value={statistics.totalPoints || 0}
-                />
-                <StatRow
-                  label="Quizzes Won"
-                  value={statistics.quizzesWon || 0}
-                />
-                {statistics.lastQuizTakenAt && (
-                  <StatRow
-                    label="Last Quiz Taken"
-                    value={new Date(
-                      statistics.lastQuizTakenAt,
-                    ).toLocaleDateString("bn-BD")}
-                  />
-                )}
-              </div>
-            </div>
-
-            <div className="mt-8 p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">
+            {/* <div className="mt-8 p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">
               <p className="text-xs sm:text-sm font-semibold text-indigo-700 uppercase tracking-wide">
                 Next step
               </p>
@@ -615,34 +587,7 @@ const StudentDashboard = () => {
                   View Published Results
                 </Link>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-slate-900 rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 text-white overflow-hidden relative">
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-500 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-72 h-72 bg-pink-500 rounded-full blur-3xl"></div>
-          </div>
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <p className="text-indigo-300 uppercase tracking-[0.2em] text-[10px] sm:text-xs font-semibold">
-                Student access
-              </p>
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mt-2 leading-tight">
-                Stay updated with quizzes, results, and notices.
-              </h3>
-              <p className="text-white/75 mt-2 max-w-2xl text-sm sm:text-base leading-relaxed">
-                This dashboard is built to keep students focused on the next
-                action, without exposing admin tools or clutter.
-              </p>
-            </div>
-            <Link
-              to="/quizzes"
-              className="btn btn-lg btn-primary gap-2 w-full md:w-auto"
-            >
-              Start a Quiz <FaArrowRight />
-            </Link>
+            </div> */}
           </div>
         </div>
       </div>
