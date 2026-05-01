@@ -15,7 +15,6 @@ const Login = () => {
       await loginWithGoogle();
       navigate("/");
     } catch (error) {
-      // console.error("Login error:", error);
       // Error toast is already shown in AuthContext
     } finally {
       setLoading(false);
@@ -23,81 +22,99 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-700 via-purple-700 to-indigo-800 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute top-10 left-5 md:w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
         <div
-          className="absolute bottom-20 right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-float"
-          style={{ animationDelay: "2s" }}
+          className="absolute bottom-10 right-5 md:w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
         ></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse-slow"></div>
       </div>
 
-      <div className="relative z-10 w-full max-w-md px-4">
-        <div className="glass-card p-10 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-              <MdQuiz className="text-4xl text-white" />
+      {/* Content */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          {/* Logo Section */}
+
+          {/* Card Section */}
+          <div className="bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-8 md:p-10 ">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-transparent">
+                স্বাগতম!
+              </h1>
+              <p className="text-blue-100 text-sm md:text-base">
+                কিশোরকণ্ঠ পাঠক ফোরাম - চট্টগ্রাম মহানগর উত্তর
+              </p>
+            </div>
+
+            {/* Divider */}
+            <div className="h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mb-8"></div>
+
+            {/* Info Section */}
+            <div className="mb-8 p-4 bg-white/5 rounded-2xl border border-white/10">
+              <p className="text-white/80 text-sm leading-relaxed text-center">
+                গুগলের মাধ্যমে সাইন ইন করো এবং প্রতিযোগিতামূলক কুইজে অংশ নাও
+              </p>
+            </div>
+
+            {/* Login Button */}
+            <button
+              onClick={handleGoogleLogin}
+              disabled={loading}
+              className="btn btn-lg w-full bg-purple-100 text-purple-600 border-0 gap-3 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed mb-4 font-semibold"
+            >
+              {loading ? (
+                <>
+                  <span className="loading loading-spinner loading-sm"></span>
+                  লগইন হচ্ছে...
+                </>
+              ) : (
+                <>
+                  <FaGoogle className="text-lg" />
+                  গুগল দিয়ে লগইন করো
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Footer Info */}
+          <div className="mt-8 text-center">
+            <p className="text-white/60 text-xs md:text-sm mb-3">
+              তোমার তথ্য নিরাপদে রাখা হবে।
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 text-xs">
+              <a
+                href="#"
+                className="text-blue-200 hover:text-white transition-colors"
+              >
+                শর্তাবলী
+              </a>
+              <span className="text-white/30">•</span>
+              <a
+                href="#"
+                className="text-blue-200 hover:text-white transition-colors"
+              >
+                গোপনীয়তা
+              </a>
+              <span className="text-white/30">•</span>
+              <a
+                href="#"
+                className="text-blue-200 hover:text-white transition-colors"
+              >
+                সহায়তা
+              </a>
             </div>
           </div>
 
-          <h1 className="text-4xl font-bold mb-3 text-gray-800">
-            Welcome Back!
-          </h1>
-          <p className="text-gray-600 mb-8">
-            Sign in to continue your quiz journey
-          </p>
-
-          <button
-            onClick={handleGoogleLogin}
-            disabled={loading}
-            className="btn btn-lg w-full bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-200 gap-3 shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <>
-                <span className="loading loading-spinner loading-sm"></span>
-                Signing in...
-              </>
-            ) : (
-              <>
-                <FaGoogle className="text-xl text-red-500" />
-                Continue with Google
-              </>
-            )}
-          </button>
-
-          {/* Troubleshooting Info */}
-          {/* <div className="mt-6 p-4 bg-blue-50 rounded-lg text-left">
-            <p className="text-xs font-semibold text-blue-800 mb-2">
-              🔧 Login Issues?
-            </p>
-            <ul className="text-xs text-blue-700 space-y-1">
-              <li>• Make sure popup blockers are disabled</li>
-              <li>• Check if Firebase is configured correctly</li>
-              <li>• Verify Google Auth is enabled in Firebase</li>
-              <li>• Check browser console (F12) for errors</li>
-            </ul>
-          </div> */}
-
-          <div className="mt-6 text-sm text-gray-500">
-            <p>By continuing, you agree to our</p>
-            <p className="mt-1">
-              <a href="#" className="text-indigo-600 hover:underline">
-                Terms of Service
-              </a>
-              {" & "}
-              <a href="#" className="text-indigo-600 hover:underline">
-                Privacy Policy
-              </a>
-            </p>
+          {/* Branding */}
+          <div className="mt-8 text-center">
+            <div className="inline-flex items-center gap-2 text-white/50 text-xs">
+              <MdQuiz className="text-lg text-purple-300" />
+              <span>কিশোরকণ্ঠ পাঠক ফোরাম</span>
+            </div>
           </div>
-        </div>
-
-        <div className="mt-8 text-center text-white">
-          <p className="text-sm">
-            New to QuizMaster? Start your journey today!
-          </p>
         </div>
       </div>
     </div>

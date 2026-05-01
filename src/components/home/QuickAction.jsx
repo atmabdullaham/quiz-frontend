@@ -60,7 +60,7 @@ const QuickAction = () => {
                 to="/quizzes"
                 className="flex-1 md:flex-none btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-medium text-base py-3 rounded-xl "
               >
-                কুইজ দাও{" "}
+                কুইজ দাও
                 <MdOutlineArrowOutward className="text-sm md:text-lg" />
               </Link>
 
