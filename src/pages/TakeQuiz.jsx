@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaCircleCheck, FaClock } from "react-icons/fa6";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../utils/axios";
 
@@ -13,6 +14,8 @@ const TakeQuiz = ({ user }) => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [startTime] = useState(Date.now());
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
 
   const { data: quiz, isLoading } = useQuery({
     queryKey: ["quiz", id],
@@ -86,12 +89,14 @@ const TakeQuiz = ({ user }) => {
 
   const handleSubmit = async (autoSubmit = false) => {
     if (!autoSubmit) {
-      const confirmed = window.confirm(
-        "Are you sure you want to submit the quiz?",
-      );
-      if (!confirmed) return;
+      setShowConfirmModal(true);
+      setConfirmAction(() => proceedSubmit);
+      return;
     }
+    proceedSubmit();
+  };
 
+  const proceedSubmit = async () => {
     // Get student info from session storage for submission (profile already updated in PreQuizForm)
     const studentInfoStr = sessionStorage.getItem("studentInfo");
     let profileData = null;
@@ -231,12 +236,12 @@ const TakeQuiz = ({ user }) => {
               </div>
 
               {/* Question Text */}
-              <h2 className="text-lg md:text-2xl font-bold text-slate-900 mb-8 leading-relaxed">
+              <h2 className="text-lg md:text-2xl font-bold text-slate-900 mb-2 leading-relaxed">
                 {currentQuestion.question}
               </h2>
 
               {/* Answer Options */}
-              <div className="space-y-3 md:space-y-4">
+              <div className="space-y-1 md:space-y-2">
                 {currentQuestion.options.map((option, oIndex) => {
                   const isSelected = answers[globalIndex] === oIndex;
                   return (
@@ -255,9 +260,9 @@ const TakeQuiz = ({ user }) => {
                         className="block  peer-checked:ring-offset-2 peer-checked:ring-purple-500 cursor-pointer"
                       >
                         <div
-                          className={`p-4 md:p-6 rounded-xl border-2 transition-all duration-200 transform] ${
+                          className={`p-2 md:p-4 rounded-xl transition-all duration-200 transform] ${
                             isSelected
-                              ? "bg-gradient-to-r from-indigo-50 to-purple-50 border-purple-500 shadow-lg"
+                              ? "bg-gradient-to-r from-indigo-50 to-purple-50 border-purple-500"
                               : "bg-slate-50 border-slate-200 hover:border-purple-300 hover:bg-indigo-50/50"
                           }`}
                         >
@@ -298,7 +303,7 @@ const TakeQuiz = ({ user }) => {
             </div>
 
             {/* Navigation and Action Buttons */}
-            <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 sticky bottom-4 md:bottom-6 border-t-4 border-gradient-to-r from-indigo-500 to-purple-600">
+            <div className="bg-white md:rounded-2xl p-4 md:p-8 sticky bottom-4 md:bottom-6 border-t-4 border-gradient-to-r from-indigo-500 to-purple-600">
               <div className="flex flex-row gap-4 items-center justify-between">
                 {/* Previous Button */}
                 <button
@@ -306,9 +311,10 @@ const TakeQuiz = ({ user }) => {
                     setCurrentPage((prev) => Math.max(0, prev - 1))
                   }
                   disabled={currentPage === 0}
-                  className="w-full md:w-auto px-6 py-3 rounded-xl font-semibold border-2 border-slate-300 text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm md:text-base"
+                  className="btn w-auto px-3 py-3 rounded-xl font-semibold border-2 border-slate-300 text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm md:text-base"
                 >
-                  ← Previous
+                  <MdKeyboardArrowLeft className="text-lg md:text-xl" />{" "}
+                  Previous
                 </button>
 
                 {/* Question Counter for Mobile */}
@@ -322,7 +328,7 @@ const TakeQuiz = ({ user }) => {
                 </div> */}
 
                 {/* Page Counter - Hidden on Mobile */}
-                <div className=" md:block text-center">
+                <div className="hidden md:block text-center">
                   <p className="text-sm text-slate-600 font-medium">
                     Question {currentPage + 1} of {totalQuestions}
                   </p>
@@ -332,15 +338,16 @@ const TakeQuiz = ({ user }) => {
                 {currentPage < totalQuestions - 1 ? (
                   <button
                     onClick={() => setCurrentPage((prev) => prev + 1)}
-                    className="w-full md:w-auto px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-purple-500 to-indigo-600 text-white  hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-sm md:text-base"
+                    className="btn w-auto px-4 py-3 rounded-xl font-semibold bg-gradient-to-r from-purple-500 to-indigo-600 text-white  hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-sm md:text-base"
                   >
-                    Next →
+                    Next
+                    <MdKeyboardArrowRight className="text-lg md:text-xl" />
                   </button>
                 ) : (
                   <button
                     onClick={() => handleSubmit(false)}
                     disabled={submitMutation.isPending}
-                    className="w-full md:w-auto px-8 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-emerald-500 to-green-600 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2 text-sm md:text-base"
+                    className="btnw-auto px-4 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-emerald-500 to-green-600  active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2 text-sm md:text-base"
                   >
                     {submitMutation.isPending ? (
                       <>
@@ -350,7 +357,7 @@ const TakeQuiz = ({ user }) => {
                     ) : (
                       <>
                         <FaCircleCheck className="text-lg" />
-                        <span>Submit Quiz</span>
+                        <span> সাবমিট</span>
                       </>
                     )}
                   </button>
@@ -368,6 +375,52 @@ const TakeQuiz = ({ user }) => {
           </div>
         )}
       </main>
+
+      {/* Custom Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full transform transition-all duration-300 scale-100">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 md:px-8 py-6 rounded-t-2xl">
+              <h2 className="text-xl md:text-2xl font-bold text-white">
+                কুইজ জমা দিতে চাও?
+              </h2>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 md:p-8">
+              <p className="text-slate-700 text-base md:text-lg leading-relaxed mb-2">
+                নিশ্চিত যে তোমার কুইজ
+              </p>
+              <p className="text-slate-500 text-sm">
+                জমা দেওয়ার পর উত্তর পরিবর্তন করতে পারবে না
+              </p>
+            </div>
+
+            {/* Modal Footer - Buttons */}
+            <div className="flex gap-4 px-6 md:px-8 py-4 md:py-6 border-t border-slate-200">
+              <button
+                onClick={() => {
+                  setShowConfirmModal(false);
+                  setConfirmAction(null);
+                }}
+                className="flex-1 btn btn-outline border-2 border-slate-300 text-slate-700 hover:border-slate-400 hover:bg-slate-50 rounded-xl font-semibold text-sm md:text-base"
+              >
+                বাতিল করো
+              </button>
+              <button
+                onClick={() => {
+                  setShowConfirmModal(false);
+                  if (confirmAction) confirmAction();
+                }}
+                className="flex-1 btn bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold text-sm md:text-base border-0 shadow-lg"
+              >
+                হ্যাঁ, জমা দাও
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
