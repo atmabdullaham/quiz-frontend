@@ -14,7 +14,11 @@ import {
   FaTimes,
   FaUserCircle,
 } from "react-icons/fa";
-import { MdOutlineLeaderboard, MdOutlineQuiz } from "react-icons/md";
+import {
+  MdOutlineArrowOutward,
+  MdOutlineLeaderboard,
+  MdOutlineQuiz,
+} from "react-icons/md";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "../utils/axios";
@@ -229,7 +233,7 @@ const StudentDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-br from-blue-700 via-purple-700 to-indigo-800">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-6 right-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-white rounded-full blur-3xl"></div>
@@ -253,7 +257,7 @@ const StudentDashboard = () => {
                 <p className="text-white/80 text-sm uppercase tracking-[0.2em]">
                   Student Dashboard
                 </p>
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mt-1 leading-tight">
+                <h1 className="text-2xl text-white sm:text-3xl md:text-4xl font-bold mt-1 leading-tight">
                   Welcome, {dbUser.name}
                 </h1>
                 <p className="text-white/85 mt-2 max-w-2xl text-sm sm:text-base leading-relaxed">
@@ -263,19 +267,20 @@ const StudentDashboard = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 w-full lg:w-auto lg:min-w-[360px]">
+            <div className="grid grid-cols-2 gap-3 md:gap-4 w-full lg:w-auto lg:min-w-[360px]">
               <Link
                 to="/quizzes"
-                className="btn w-full bg-white text-indigo-700 hover:bg-indigo-50 border-0 rounded-xl shadow-lg"
+                className="btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-medium text-base py-3 rounded-xl"
               >
                 Take Quiz
-                <FaArrowRight />
+                <MdOutlineArrowOutward className="text-sm md:text-lg" />
               </Link>
               <Link
                 to="/results"
-                className="btn w-full btn-outline border-white/40 text-white hover:bg-white/10 rounded-xl"
+                className="btn px-4 py-3 rounded-xl  bg-purple-600 text-white border-purple-600 font-semibold"
               >
                 View Results
+                <MdOutlineArrowOutward className="text-sm md:text-lg" />
               </Link>
             </div>
           </div>
@@ -283,7 +288,7 @@ const StudentDashboard = () => {
       </div>
 
       <div className="container mx-auto px-3 sm:px-4 py-6 md:py-12 space-y-6 md:space-y-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
           {quickStats.map((stat) => (
             <div
               key={stat.label}
@@ -304,7 +309,7 @@ const StudentDashboard = () => {
               </p>
             </div>
           ))}
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <div className="xl:col-span-2 bg-white rounded-3xl shadow-lg border border-gray-100 p-4 sm:p-6 md:p-8">

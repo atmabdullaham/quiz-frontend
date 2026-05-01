@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { FaChartBar, FaEdit, FaEye, FaPlus, FaTrash } from "react-icons/fa";
+import { FaChartBar, FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import axios from "../utils/axios";
 import { formatBangladeshiDate } from "../utils/bangladeshiDate";
@@ -62,7 +62,10 @@ const QuizzesSection = () => {
       {/* Action Bar */}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-800">সকল কুইজ</h2>
-        <Link to="/admin/quiz/create" className="btn btn-primary gap-2">
+        <Link
+          to="/admin/quiz/create"
+          className="btn btn-primary text-white gap-2"
+        >
           <FaPlus />
           নতুন কুইজ তৈরি করুন
         </Link>
@@ -90,12 +93,13 @@ const QuizzesSection = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {quizzes?.map((quiz) => (
+          {quizzes?.map((quiz, i) => (
             <div
               key={quiz._id}
-              className="glass-card p-6 hover:shadow-xl transition-all"
+              className="glass-card p-6 border border-purple-300 bg-purple-100 rounded-md transition-all"
             >
               <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
+                <h1>{i + 1}</h1>
                 <div className="flex-1 min-w-0 w-full">
                   <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <h3 className="text-xl font-bold text-gray-800 truncate">
@@ -103,6 +107,9 @@ const QuizzesSection = () => {
                     </h3>
                     {getStatusBadge(quiz)}
                   </div>
+                  <h3 className="text-lg font-medium  text-gray-800 truncate">
+                    {quiz.subtitle}
+                  </h3>
                   <p className="text-gray-600 mb-3 line-clamp-2">
                     {quiz.description || "বর্ণনা নেই"}
                   </p>
@@ -133,16 +140,16 @@ const QuizzesSection = () => {
                   >
                     <FaChartBar />
                   </Link>
-                  <Link
+                  {/* <Link
                     to={`/quiz/${quiz._id}/leaderboard`}
                     className="btn btn-sm btn-success gap-2 flex-1 sm:flex-none"
                     title="লিডারবোর্ড দেখুন"
                   >
                     <FaEye />
-                  </Link>
+                  </Link> */}
                   <Link
                     to={`/admin/quiz/${quiz._id}/edit`}
-                    className="btn btn-sm btn-primary gap-2 flex-1 sm:flex-none"
+                    className="btn btn-sm btn-primary text-white gap-2 flex-1 sm:flex-none"
                   >
                     <FaEdit />
                   </Link>
