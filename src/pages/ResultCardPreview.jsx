@@ -60,11 +60,8 @@ const ResultCardPreview = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-black text-gray-900 mb-2">
-          🎨 Result Card Designer
+          🎨 Result Card preview
         </h1>
-        <p className="text-gray-600 mb-8">
-          Design and preview your result card before downloading
-        </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Preview Section */}
@@ -84,10 +81,6 @@ const ResultCardPreview = () => {
                   forRef={cardRef}
                 />
               </div>
-              <p className="text-xs text-gray-500 text-center mt-4">
-                💡 Scroll to see the full result card. Changes will appear in
-                real-time.
-              </p>
             </div>
           </div>
 
