@@ -51,23 +51,14 @@ const Results = () => {
         <div className="container mx-auto px-4 py-16 md:py-20 relative">
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="space-y-6">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold tracking-wide backdrop-blur">
-                <FaMedal /> প্রকাশিত ফলাফল কেন্দ্র
-              </span>
-
               <div className="flex items-start gap-4">
                 <div className="hidden sm:flex h-16 w-16 items-center justify-center rounded-3xl bg-white/15 text-3xl shadow-lg shadow-blue-950/20">
                   <FaMedal />
                 </div>
                 <div>
                   <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight">
-                    প্রকাশিত ফলাফল
+                    ফলাফল
                   </h1>
-                  <p className="mt-4 max-w-2xl text-sm md:text-lg text-blue-100 leading-relaxed">
-                    সকল প্রকাশিত পরীক্ষার ফলাফল এখানে পাওয়া যাবে। প্রতিটি কার্ডে
-                    ক্লাসভিত্তিক বা সামগ্রিক র‍্যাঙ্কিং, প্রকাশের তারিখ এবং
-                    বিজয়ীদের সংক্ষিপ্ত পরিচয় দেখানো হয়েছে।
-                  </p>
                 </div>
               </div>
 
@@ -106,28 +97,6 @@ const Results = () => {
                       <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
                         Result Board
                       </p>
-                      <p className="text-xl font-black text-slate-900">
-                        সুশৃঙ্খল ও দ্রুত দেখুন
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 grid gap-3 text-sm text-slate-600">
-                    <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
-                      <span>রঙিন প্রিভিউ</span>
-                      <span className="font-semibold text-slate-900">Yes</span>
-                    </div>
-                    <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
-                      <span>ডিটেইল ভিউ</span>
-                      <span className="font-semibold text-slate-900">
-                        Available
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
-                      <span>ডাউনলোড কার্ড</span>
-                      <span className="font-semibold text-slate-900">
-                        940×788
-                      </span>
                     </div>
                   </div>
                 </div>
