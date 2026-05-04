@@ -8,7 +8,7 @@ import {
   FaPlay,
   FaTrophy,
 } from "react-icons/fa";
-import { MdError } from "react-icons/md";
+import { MdError, MdOutlineArrowOutward } from "react-icons/md";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "../utils/axios";
@@ -430,34 +430,27 @@ const PreQuizForm = ({ user }) => {
     const seconds = timeTaken % 60;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12 flex items-center">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-purple-100">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 md:py-4 flex items-center">
+        <div className="container mx-auto md:px-4 max-w-2xl">
+          <div className="bg-white rounded-3xl  p-2 md:p-8 border border-purple-100 pb-12">
             {/* Success Icon */}
-            <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full mx-auto mb-8 flex items-center justify-center shadow-lg">
-              <FaTrophy className="text-5xl text-white" />
+            <div className="w-12 h-12 md:w-24 md:h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full mx-auto mb-8 flex items-center justify-center shadow-lg">
+              <FaTrophy className="text-2xl md:text-4xl text-white" />
             </div>
 
             {/* Already Submitted Message */}
             <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2 text-center">
-              আপনি ইতিমধ্যে অংশগ্রহণ করেছেন ✅
+              তুমি ইতিমধ্যে কুইজটিতে অংশগ্রহণ করেছো
             </h1>
-            <p className="text-gray-600 text-center mb-1 text-lg">
-              You have already completed this quiz
-            </p>
+
             <p className="text-gray-500 text-center mb-8 text-sm">
-              প্রতিটি শিক্ষার্থী শুধুমাত্র একবার এই কুইজে অংশ নিতে পারবেন। নতুন
+              শিক্ষার্থী শুধুমাত্র একবার এই কুইজে অংশ নিতে পারবেন। নতুন
               প্রচেষ্টার জন্য পুনরায় শুরু করা যাবে না।
             </p>
 
             {/* Performance Score Box */}
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-6 md:p-8 mb-8">
-              <p className="font-bold text-blue-900 mb-6 flex items-center gap-2 text-lg">
-                <FaCheckCircle className="text-green-500 text-xl" />
-                আপনার পারফরম্যান্স
-              </p>
-
-              <div className="grid grid-cols-3 gap-4 md:gap-6">
+              <div className="grid grid-cols-2 gap-4 md:gap-6">
                 {/* Score */}
                 <div className="text-center">
                   <p className="text-xs md:text-sm text-blue-700 font-semibold mb-2 uppercase tracking-wide">
@@ -481,20 +474,6 @@ const PreQuizForm = ({ user }) => {
                   </p>
                   <p className="text-sm text-blue-600 mt-1">মিনিট</p>
                 </div>
-
-                {/* Average Time */}
-                <div className="text-center">
-                  <p className="text-xs md:text-sm text-blue-700 font-semibold mb-2 uppercase tracking-wide">
-                    প্রতি প্রশ্ন
-                  </p>
-                  <p className="text-2xl md:text-3xl font-bold text-blue-900">
-                    {totalQuestions > 0
-                      ? Math.round(timeTaken / totalQuestions)
-                      : 0}
-                    s
-                  </p>
-                  <p className="text-sm text-blue-600 mt-1">সেকেন্ড</p>
-                </div>
               </div>
 
               {/* Performance Feedback */}
@@ -502,19 +481,19 @@ const PreQuizForm = ({ user }) => {
                 <p className="text-sm md:text-base font-semibold text-slate-800">
                   {percentage >= 80 ? (
                     <span className="text-green-600">
-                      🌟 চমৎকার পারফরম্যান্স! আপনি দুর্দান্ত করেছেন।
+                      🌟 চমৎকার! তুমি দুর্দান্ত করেছো
                     </span>
                   ) : percentage >= 60 ? (
                     <span className="text-blue-600">
-                      👍 ভালো পারফরম্যান্স! আরও উন্নতির জায়গা আছে।
+                      👍 ভালো! আরও উন্নতির জায়গা আছে।
                     </span>
                   ) : percentage >= 40 ? (
                     <span className="text-amber-600">
-                      📚 আরও অনুশীলনের প্রয়োজন। পরবর্তী কুইজে ভাল করুন।
+                      📚 আরও অনুশীলনের প্রয়োজন। পরবর্তী কুইজে ভাল করো
                     </span>
                   ) : (
                     <span className="text-red-600">
-                      💪 চেষ্টা করতে থাকুন। প্রতিটি শিক্ষা মূল্যবান।
+                      💪 চেষ্টা করলে পরবর্তী কুইজে ভাল করতে পারো
                     </span>
                   )}
                 </p>
@@ -523,34 +502,34 @@ const PreQuizForm = ({ user }) => {
 
             {/* Action Buttons */}
             <div className="space-y-3">
-              <Link
-                to={`/quiz/${id}/result`}
-                className="btn btn-gradient btn-lg w-full gap-2 flex justify-center"
+              {/* <Link
+                to={`/quiz/${id}/leaderboard`}
+                className="btn btn-outline btn-lg w-full gap-2 flex justify-center text-sm"
               >
-                <FaCheckCircle className="text-lg" />
-                আপনার বিস্তারিত ফলাফল দেখুন
-              </Link>
+                <FaTrophy />
+                লিডারবোর্ড
+              </Link> */}
 
               <div className="grid grid-cols-2 gap-3">
                 <Link
-                  to={`/quiz/${id}/leaderboard`}
-                  className="btn btn-outline btn-lg w-full gap-2 flex justify-center text-sm"
+                  to={`/quiz/${id}/result`}
+                  className="btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-medium  py-3 rounded-xl"
                 >
-                  <FaTrophy />
-                  লিডারবোর্ড
+                  <FaCheckCircle className="text-lg" />
+                  বিস্তারিত দেখো
                 </Link>
                 <Link
                   to="/quizzes"
-                  className="btn btn-outline btn-lg w-full gap-2 flex justify-center text-sm"
+                  className="btn bg-purple-600 text-white border-purple-600 px-4 py-3 rounded-xl  font-semibold "
                 >
-                  <FaArrowRight />
                   নতুন কুইজ
+                  <MdOutlineArrowOutward className="text-sm md:text-lg" />
                 </Link>
               </div>
             </div>
 
             {/* Disabled Message */}
-            <div className="mt-6 p-4 rounded-lg bg-amber-50 border-l-4 border-amber-400">
+            {/* <div className="mt-6 p-4 rounded-lg bg-amber-50 border-l-4 border-amber-400">
               <p className="text-sm text-amber-900 font-semibold flex items-center gap-2">
                 <span className="text-lg">🔒</span>
                 নতুন প্রচেষ্টা নিষ্ক্রিয়
@@ -559,7 +538,7 @@ const PreQuizForm = ({ user }) => {
                 এই কুইজটি আপনি ইতিমধ্যে সম্পন্ন করেছেন। প্রতিটি কুইজে মাত্র একটি
                 প্রচেষ্টার অনুমতি রয়েছে।
               </p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

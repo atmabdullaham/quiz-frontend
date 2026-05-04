@@ -44,7 +44,7 @@ const Results = () => {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,#eff6ff_0%,#ffffff_45%,#f8fafc_100%)]">
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-700 via-blue-600 to-cyan-500 text-white">
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-purple-700 to-indigo-800 text-white">
         <div className="absolute -top-20 right-0 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-20 left-0 h-72 w-72 rounded-full bg-sky-200/20 blur-3xl" />
 
@@ -59,29 +59,6 @@ const Results = () => {
                   <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight">
                     ফলাফল
                   </h1>
-                </div>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur-lg shadow-lg shadow-blue-950/20">
-                  <p className="text-sm text-blue-100">প্রকাশিত ফলাফল</p>
-                  <p className="mt-2 text-3xl font-black">{results.length}</p>
-                </div>
-                <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur-lg shadow-lg shadow-blue-950/20">
-                  <p className="text-sm text-blue-100">মোট বিজয়ী</p>
-                  <p className="mt-2 text-3xl font-black">{totalWinners}</p>
-                </div>
-                <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur-lg shadow-lg shadow-blue-950/20">
-                  <p className="text-sm text-blue-100">সর্বশেষ প্রকাশ</p>
-                  <p className="mt-2 text-base font-semibold">
-                    {latestPublishedAt
-                      ? latestPublishedAt.toLocaleDateString("bn-BD", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })
-                      : "—"}
-                  </p>
                 </div>
               </div>
             </div>
