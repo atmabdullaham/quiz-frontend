@@ -78,11 +78,15 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
     try {
       setLoading(true);
 
-      // VERSION 2: Format data for new backend endpoint
-      // userId is already a string from the mapping, so just pass it directly
+      // VERSION 2: Format data for new backend endpoint with full winner info
       const topWinners = selectedWinners.map((winner) => ({
-        userId: winner.userId, // Already a string from prepareResults mapping
+        userId: winner.userId, // User ID
         score: winner.score,
+        // Include profile data for better display in results
+        studentName: winner.studentName,
+        schoolName: winner.schoolName,
+        className: winner.className,
+        rollNumber: winner.rollNumber,
       }));
 
       console.log("Publishing with topWinners:", topWinners); // Debug log

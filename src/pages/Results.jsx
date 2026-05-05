@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaArrowRight, FaCalendarAlt, FaMedal } from "react-icons/fa";
+import { FaArrowRight, FaCalendarAlt, FaMedal, FaSync } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import NoticeMarquee from "../components/NoticeMarquee";
 import axios from "../utils/axios";
@@ -8,16 +8,40 @@ const Results = () => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchResults();
+
+    // Auto-refetch when window regains focus (user switches back to tab)
+    const handleFocus = () => {
+      fetchResults();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
   }, []);
 
   const fetchResults = async () => {
     try {
-      setLoading(true);
+      if (!refreshing) setLoading(true);
       const response = await axios.get("/api/published-results");
-      setResults(Array.isArray(response.data) ? response.data : []);
+
+      console.log("Published results response:", response.data); // Debug log
+
+      // Map the response data to ensure compatibility with frontend
+      const mappedResults = Array.isArray(response.data)
+        ? response.data.map((result) => ({
+            ...result,
+            // Normalize winners: use topWinners if winners doesn't exist
+            winners: result.winners || result.topWinners || [],
+            // Ensure quizId has default values
+            quizId: result.quizId || { title: "অজানা কুইজ", _id: "unknown" },
+          }))
+        : [];
+
+      console.log("Mapped results:", mappedResults); // Debug log
+      setResults(mappedResults);
       setError("");
     } catch (err) {
       console.error("Error fetching results:", err);
@@ -28,7 +52,27 @@ const Results = () => {
       setError(errorMsg);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchResults();
+  };
+
+  // Helper function to get winner info from different data structures
+  const getWinnerInfo = (winner) => {
+    return {
+      studentName:
+        winner?.studentName || winner?.userId?.profile?.studentName || "—",
+      className:
+        winner?.className || winner?.userId?.profile?.className || "শ্রেণী নেই",
+      schoolName:
+        winner?.schoolName ||
+        winner?.userId?.profile?.schoolName ||
+        "প্রতিষ্ঠান নেই",
+    };
   };
 
   const totalWinners = results.reduce(
@@ -63,7 +107,16 @@ const Results = () => {
               </div>
             </div>
 
-            <div className="flex justify-center lg:justify-end">
+            <div className="flex justify-center lg:justify-end gap-3">
+              <button
+                onClick={handleRefresh}
+                disabled={loading || refreshing}
+                className="h-14 w-14 rounded-2xl bg-white/15 backdrop-blur-2xl border border-white/20 text-white hover:bg-white/25 transition-all disabled:opacity-50 flex items-center justify-center shadow-lg"
+                title="ফলাফল রিফ্রেশ করুন"
+              >
+                <FaSync className={refreshing ? "animate-spin" : ""} />
+              </button>
+
               <div className="w-full max-w-md rounded-[2rem] border border-white/15 bg-white/10 p-6 backdrop-blur-2xl shadow-[0_30px_80px_rgba(15,23,42,0.25)]">
                 <div className="rounded-[1.75rem] bg-white p-6 text-slate-900 shadow-xl">
                   <div className="flex items-center gap-3">
@@ -85,7 +138,7 @@ const Results = () => {
 
       <NoticeMarquee displayLocation="result" />
 
-      <div className="container mx-auto px-4 py-12 md:py-16">
+      <div className="container mx-auto md:px-4  py-4 md:py-16">
         {loading ? (
           <div className="flex h-96 items-center justify-center">
             <div className="loading loading-spinner loading-lg text-blue-600"></div>
@@ -96,9 +149,13 @@ const Results = () => {
               <span>{error}</span>
             </div>
             <button
-              onClick={fetchResults}
+              onClick={handleRefresh}
+              disabled={loading || refreshing}
               className="btn btn-primary mt-4 gap-2"
             >
+              {refreshing && (
+                <span className="loading loading-spinner loading-sm"></span>
+              )}
               আবার চেষ্টা করুন
             </button>
           </div>
@@ -115,17 +172,17 @@ const Results = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {results.map((result) => (
               <Link
                 key={result._id}
                 to={`/published-result/${result.quizId?._id}`}
                 className="group"
               >
-                <article className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.08)] transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-[0_30px_70px_rgba(15,23,42,0.12)]">
+                <article className="relative overflow-hidden md:rounded-2xl border border-slate-200 bg-white  transition-all duration-300 ">
                   <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
 
-                  <div className="p-6 md:p-7">
+                  <div className="p-4 md:p-7">
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
                         <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
@@ -143,10 +200,6 @@ const Results = () => {
                         <h3 className="mt-4 text-2xl font-black leading-tight text-slate-900 group-hover:text-blue-700">
                           {result.quizId?.title || "অজানা কুইজ"}
                         </h3>
-                        <p className="mt-2 text-sm leading-relaxed text-slate-500">
-                          প্রকাশিত ফলাফল দেখুন, র‍্যাঙ্কিং তুলনা করুন এবং
-                          বিস্তারিত পৃষ্ঠায় যান।
-                        </p>
                       </div>
 
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg">
@@ -154,7 +207,7 @@ const Results = () => {
                       </div>
                     </div>
 
-                    <div className="mt-6 flex flex-wrap gap-3">
+                    <div className="mt-6 flex  flex-wrap gap-3">
                       <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700">
                         {result.publishType === "classwise"
                           ? "শ্রেণী অনুযায়ী"
@@ -166,30 +219,29 @@ const Results = () => {
                     </div>
 
                     <div className="mt-6 space-y-3">
-                      {(result.winners || []).slice(0, 3).map((winner, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3 ring-1 ring-slate-100"
-                        >
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-lg shadow-sm ring-1 ring-slate-200">
-                            {idx === 0 && "🥇"}
-                            {idx === 1 && "🥈"}
-                            {idx === 2 && "🥉"}
+                      {(result.winners || []).slice(0, 3).map((winner, idx) => {
+                        const winnerInfo = getWinnerInfo(winner);
+                        return (
+                          <div
+                            key={idx}
+                            className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3 ring-1 ring-slate-100"
+                          >
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-lg shadow-sm ring-1 ring-slate-200">
+                              {idx === 0 && "🥇"}
+                              {idx === 1 && "🥈"}
+                              {idx === 2 && "🥉"}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate font-semibold text-slate-900">
+                                {winnerInfo.studentName}
+                              </p>
+                              <p className="truncate text-xs text-slate-500">
+                                {winnerInfo.className} • {winnerInfo.schoolName}
+                              </p>
+                            </div>
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate font-semibold text-slate-900">
-                              {winner.studentName || "—"}
-                            </p>
-                            <p className="truncate text-xs text-slate-500">
-                              {winner.className || "শ্রেণী নেই"} •{" "}
-                              {winner.schoolName || "প্রতিষ্ঠান নেই"}
-                            </p>
-                          </div>
-                          <div className="text-xs font-medium text-slate-400">
-                            র‍্যাঙ্ক
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     <div className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-blue-700">
