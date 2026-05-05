@@ -430,9 +430,9 @@ const PreQuizForm = ({ user }) => {
     const seconds = timeTaken % 60;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 md:py-4 flex items-center">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-1 md:py-4 flex items-center">
         <div className="container mx-auto md:px-4 max-w-2xl">
-          <div className="bg-white rounded-3xl  p-2 md:p-8 border border-purple-100 pb-12">
+          <div className="bg-white md:rounded-3xl  p-2 md:p-8 border border-purple-100 pb-12 pt-8">
             {/* Success Icon */}
             <div className="w-12 h-12 md:w-24 md:h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full mx-auto mb-8 flex items-center justify-center shadow-lg">
               <FaTrophy className="text-2xl md:text-4xl text-white" />
@@ -477,7 +477,7 @@ const PreQuizForm = ({ user }) => {
               </div>
 
               {/* Performance Feedback */}
-              <div className="mt-6 p-4 rounded-lg bg-white/70 border border-blue-100">
+              {/* <div className="mt-6 p-2 rounded-lg bg-white/70 border border-blue-100">
                 <p className="text-sm md:text-base font-semibold text-slate-800">
                   {percentage >= 80 ? (
                     <span className="text-green-600">
@@ -497,7 +497,7 @@ const PreQuizForm = ({ user }) => {
                     </span>
                   )}
                 </p>
-              </div>
+              </div> */}
             </div>
 
             {/* Action Buttons */}

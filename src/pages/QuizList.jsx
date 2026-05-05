@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { FaLock, FaTrophy } from "react-icons/fa";
+import { FaLock } from "react-icons/fa";
+import { FaTrophy } from "react-icons/fa6";
 import { MdQuiz } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import NoticeMarquee from "../components/NoticeMarquee";
@@ -314,6 +315,15 @@ const QuizList = ({ user }) => {
 
                       {/* Action Buttons */}
                       <div className="p-6 pt-1 border-t border-gray-100 flex gap-3">
+                        <Link
+                          to={`/quiz/${quiz._id}/result`}
+                          className="btn btn-outline outline-purple-300 outline-1 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-purple-600 hover:text-white hover:border-purple-600 font-semibold"
+                          title="ফলাফল দেখো"
+                        >
+                          <FaTrophy className="text-lg" />
+                          <span className="hidden sm:inline">তোমার মার্কস</span>
+                        </Link>
+
                         {status.text === "Active" ? (
                           <>
                             {user ? (
@@ -321,7 +331,7 @@ const QuizList = ({ user }) => {
                                 onClick={() => handleStartQuiz(quiz._id)}
                                 className="flex-1 btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-medium text-base py-3 rounded-xl transition-all duration-300  hover:shadow-purple-400/50 "
                               >
-                                🚀 শুরু করো
+                                শুরু করো 🚀
                               </button>
                             ) : (
                               <button
@@ -329,7 +339,7 @@ const QuizList = ({ user }) => {
                                   toast.error("কুইজ শুরু করতে লগইন করো");
                                   navigate("/login");
                                 }}
-                                className="flex-1 btn bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-lg py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-400/50 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+                                className="flex-1 btn bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium text-base py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-400/50 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
                               >
                                 <FaLock className="text-lg" />
                                 <span>লগইন করো</span>
@@ -346,14 +356,6 @@ const QuizList = ({ user }) => {
                               : "🔒 শীঘ্রই আসছে"}
                           </button>
                         )}
-                        <Link
-                          to={`/quiz/${quiz._id}/leaderboard`}
-                          className="btn btn-outline px-4 py-3 rounded-xl transition-all duration-300 hover:bg-purple-600 hover:text-white hover:border-purple-600 font-semibold"
-                          title="লিডারবোর্ড দেখুন"
-                        >
-                          <FaTrophy className="text-lg" />
-                          <span className="hidden sm:inline">লিডারবোর্ড</span>
-                        </Link>
                       </div>
                     </div>
                   </div>
