@@ -375,59 +375,76 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
                   </div>
                 </div>
 
-                {/* Candidates Grid */}
+                {/* Candidates Table */}
                 {topCandidates.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                    {topCandidates.map((candidate, idx) => {
-                      const isSelected = selectedWinners.find(
-                        (w) => w._id === candidate._id,
-                      );
-                      return (
-                        <div
-                          key={candidate._id}
-                          className={`p-3 border rounded flex justify-between items-center ${
-                            isSelected
-                              ? "bg-green-100 border-green-400"
-                              : "bg-white border-gray-300"
-                          }`}
-                        >
-                          <div className="flex-1">
-                            <div className="font-semibold text-sm">
-                              {idx === 0 && "🥇 "}
-                              {idx === 1 && "🥈 "}
-                              {idx === 2 && "🥉 "}
-                              {candidate.studentName}
-                            </div>
-                            <div className="text-xs text-gray-600">
-                              স্কোর:{" "}
-                              <span className="font-bold">
+                  <div className="overflow-x-auto mb-4">
+                    <table className="min-w-full divide-y-2 divide-gray-200">
+                      <thead className="ltr:text-left rtl:text-right bg-white">
+                        <tr className="*:font-semibold *:text-gray-700 *:text-sm *:px-3 *:py-2">
+                          <th className="whitespace-nowrap">অবস্থান</th>
+                          <th className="whitespace-nowrap">শিক্ষার্থীর নাম</th>
+                          <th className="whitespace-nowrap">স্কোর</th>
+                          <th className="whitespace-nowrap">শ্রেণি</th>
+                          <th className="whitespace-nowrap">প্রতিষ্ঠান</th>
+                          <th className="whitespace-nowrap text-center">
+                            নির্বাচন
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody className="divide-y divide-gray-200 *:even:bg-gray-50">
+                        {topCandidates.map((candidate, idx) => {
+                          const isSelected = selectedWinners.find(
+                            (w) => w._id === candidate._id,
+                          );
+                          const medals = ["🥇", "🥈", "🥉"];
+                          return (
+                            <tr
+                              key={candidate._id}
+                              className={`*:text-gray-900 *:text-sm *:px-3 *:py-2 transition-colors ${
+                                isSelected ? "bg-green-50" : ""
+                              }`}
+                            >
+                              <td className="font-bold text-lg text-center whitespace-nowrap">
+                                {medals[idx] || `#${idx + 1}`}
+                              </td>
+                              <td className="font-semibold whitespace-nowrap">
+                                {candidate.studentName}
+                              </td>
+                              <td className="font-bold text-blue-600 whitespace-nowrap">
                                 {candidate.score}
-                              </span>{" "}
-                              | শ্রেণী: {candidate.className}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {candidate.schoolName}
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (isSelected) {
-                                removeCandidate(groupName, candidate._id);
-                              } else {
-                                addCandidate(groupName, candidate);
-                              }
-                            }}
-                            disabled={loading}
-                            className={`btn btn-xs ml-2 ${
-                              isSelected ? "btn-error" : config.buttonColor
-                            }`}
-                          >
-                            {isSelected ? "❌" : "✓"}
-                          </button>
-                        </div>
-                      );
-                    })}
+                              </td>
+                              <td className="whitespace-nowrap">
+                                {candidate.className}
+                              </td>
+                              <td className="text-xs text-gray-600 whitespace-nowrap">
+                                {candidate.schoolName}
+                              </td>
+                              <td className="text-center whitespace-nowrap">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (isSelected) {
+                                      removeCandidate(groupName, candidate._id);
+                                    } else {
+                                      addCandidate(groupName, candidate);
+                                    }
+                                  }}
+                                  disabled={loading}
+                                  className={`btn btn-xs ${
+                                    isSelected
+                                      ? "btn-error"
+                                      : config.buttonColor
+                                  }`}
+                                >
+                                  {isSelected ? "❌" : "✓"}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 ) : (
                   <div className="text-center py-6 text-gray-500">

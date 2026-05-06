@@ -268,7 +268,7 @@ const Results = () => {
 
                       {/* Display Group-wise Results */}
                       {displayData.isGroupwise ? (
-                        <div className="mt-6 space-y-4">
+                        <div className="mt-6 space-y-6">
                           {Object.entries(displayData.groups).map(
                             ([groupKey, groupData]) => {
                               const config = GROUP_CONFIG[groupKey];
@@ -278,40 +278,52 @@ const Results = () => {
                               if (winners.length === 0) return null;
 
                               return (
-                                <div
-                                  key={groupKey}
-                                  className={`p-3 rounded-xl border-2 ${config?.borderColor} ${config?.color}`}
-                                >
-                                  <p
-                                    className={`text-xs font-bold mb-2 ${config?.textColor}`}
-                                  >
-                                    {config?.name || groupKey}
-                                  </p>
-                                  <div className="space-y-2">
-                                    {winners.slice(0, 3).map((winner, idx) => {
-                                      const winnerInfo = getWinnerInfo(winner);
-                                      return (
-                                        <div
-                                          key={idx}
-                                          className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 ring-1 ring-slate-100 text-sm"
-                                        >
-                                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 text-sm shadow-sm">
-                                            {idx === 0 && "🥇"}
-                                            {idx === 1 && "🥈"}
-                                            {idx === 2 && "🥉"}
-                                          </div>
-                                          <div className="min-w-0 flex-1">
-                                            <p className="truncate font-semibold text-slate-900">
-                                              {winnerInfo.studentName}
-                                            </p>
-                                            <p className="truncate text-xs text-slate-500">
-                                              {winnerInfo.className}
-                                            </p>
-                                          </div>
-                                        </div>
-                                      );
-                                    })}
+                                <div key={groupKey} className="overflow-x-auto">
+                                  <div className={`p-3 mb-2 rounded-t-xl border-2 ${config?.borderColor} ${config?.color}`}>
+                                    <p className={`text-sm font-bold ${config?.textColor}`}>
+                                      {config?.name || groupKey}
+                                    </p>
                                   </div>
+                                  <table className="min-w-full divide-y-2 divide-gray-200 border-2 border-t-0 rounded-b-xl overflow-hidden">
+                                    <thead className="ltr:text-left rtl:text-right bg-slate-50">
+                                      <tr className="*:font-semibold *:text-gray-700 *:text-sm">
+                                        <th className="px-4 py-3 whitespace-nowrap">অবস্থান</th>
+                                        <th className="px-4 py-3 whitespace-nowrap">শিক্ষার্থীর নাম</th>
+                                        <th className="px-4 py-3 whitespace-nowrap">স্কোর</th>
+                                        <th className="px-4 py-3 whitespace-nowrap">শ্রেণি</th>
+                                        <th className="px-4 py-3 whitespace-nowrap">প্রতিষ্ঠান</th>
+                                      </tr>
+                                    </thead>
+
+                                    <tbody className="divide-y divide-gray-200 *:even:bg-gray-50">
+                                      {winners.map((winner, idx) => {
+                                        const winnerInfo = getWinnerInfo(winner);
+                                        const medals = ["🥇", "🥈", "🥉"];
+                                        return (
+                                          <tr
+                                            key={idx}
+                                            className="*:text-gray-900 *:text-sm hover:bg-blue-50 transition-colors"
+                                          >
+                                            <td className="px-4 py-3 whitespace-nowrap font-semibold text-lg text-center">
+                                              {medals[idx] || `#${idx + 1}`}
+                                            </td>
+                                            <td className="px-4 py-3 whitespace-nowrap font-semibold">
+                                              {winnerInfo.studentName}
+                                            </td>
+                                            <td className="px-4 py-3 whitespace-nowrap font-bold text-blue-600">
+                                              {winner.score || "—"}
+                                            </td>
+                                            <td className="px-4 py-3 whitespace-nowrap">
+                                              {winnerInfo.className}
+                                            </td>
+                                            <td className="px-4 py-3 whitespace-nowrap text-gray-600 text-xs">
+                                              {winnerInfo.schoolName}
+                                            </td>
+                                          </tr>
+                                        );
+                                      })}
+                                    </tbody>
+                                  </table>
                                 </div>
                               );
                             },
