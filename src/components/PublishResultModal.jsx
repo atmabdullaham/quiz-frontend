@@ -3,17 +3,60 @@ import Toast from "react-hot-toast";
 import { FaMedal, FaTrash } from "react-icons/fa";
 import axios from "../utils/axios";
 
+// Helper function to determine group based on class
+const getGroupByClass = (className) => {
+  if (!className) return null;
+
+  const classStr = String(className).toLowerCase().trim();
+  const parts = classStr.split(/[\s,\-./]+/);
+
+  // Group 3: অগ্রপথিক (11th-12th) - Check first to avoid "1" matching in group 1
+  if (parts.some((part) => ["11", "12"].includes(part))) {
+    return "অগ্রপথিক";
+  }
+
+  // Group 2: প্রত্যয় (8th-10th)
+  if (parts.some((part) => ["8", "9", "10"].includes(part))) {
+    return "প্রত্যয়";
+  }
+
+  // Group 1: স্বপ্নিল (4th-7th)
+  if (parts.some((part) => ["4", "5", "6", "7"].includes(part))) {
+    return "স্বপ্নিল";
+  }
+
+  return null;
+};
+
+const GROUPS = {
+  সকল: { label: "সকল গ্রুপ", key: "all" },
+  স্বপ্নিল: { label: "१ম গ্রুপ - স্বপ্নিল (४র्थ-७ম)", key: "swapnil" },
+  প্রত্যয়: { label: "२य় গ্রুপ - প্রত্যয় (०८ম-०१०ম)", key: "prottoy" },
+  অগ্রপথিক: { label: "०३য় গ্রুপ - অগ্রপথিক (००११শ-००१२শ)", key: "ogropothik" },
+};
+
 const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
   const [candidates, setCandidates] = useState([]);
   const [selectedWinners, setSelectedWinners] = useState([]);
   const [loading, setLoading] = useState(false);
   const [preparing, setPreparing] = useState(true);
   const [error, setError] = useState("");
-  const [topCount, setTopCount] = useState(10); // Default top 10
+  const [topCount, setTopCount] = useState(10);
+  const [selectedGroup, setSelectedGroup] = useState("সকল");
 
   useEffect(() => {
     prepareResults();
   }, [quizId]);
+
+  // Update filtered winners when group or topCount changes
+  useEffect(() => {
+    const filtered =
+      selectedGroup === "সকল"
+        ? candidates
+        : candidates.filter((c) => c.group === selectedGroup);
+
+    setSelectedWinners(filtered.slice(0, topCount));
+  }, [selectedGroup, topCount, candidates]);
 
   // VERSION 2: Simplified - no more publishType
   const prepareResults = async () => {
@@ -26,23 +69,24 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
         `/api/admin/quizzes/${quizId}/prepare-publish/overall`,
       );
 
-      // FIX: Properly map nested response structure
+      // FIX: Properly map nested response structure with group assignment
       const mapped = response.data.map((sub) => ({
         _id: sub._id,
         quizId: sub.quizId,
-        userId: sub.userId?._id, // Extract ID from nested object
+        userId: sub.userId?._id,
         score: sub.score,
         totalQuestions: sub.totalQuestions,
         timeTaken: sub.timeTaken,
         submittedAt: sub.submittedAt,
-        // Profile data from nested userId object
         studentName: sub.userId?.profile?.studentName || "Unknown",
         schoolName: sub.userId?.profile?.schoolName || "Unknown",
         className: sub.userId?.profile?.className || "Unknown",
         rollNumber: sub.userId?.profile?.rollNumber || "",
+        group: getGroupByClass(sub.userId?.profile?.className), // Assign group
       }));
-      setCandidates(mapped); // Store all candidates
-      setSelectedWinners(mapped.slice(0, topCount)); // Default to topCount
+
+      setCandidates(mapped);
+      setSelectedWinners(mapped.slice(0, topCount));
       setError("");
     } catch (err) {
       console.error("Error preparing results:", err);
@@ -63,10 +107,11 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
 
   const handleTopCountChange = (e) => {
     const newCount = parseInt(e.target.value) || 10;
-    const maxCount = candidates.length;
+    const maxCount = candidates.filter((c) =>
+      selectedGroup === "সকল" ? true : c.group === selectedGroup,
+    ).length;
     const validCount = Math.min(Math.max(newCount, 1), maxCount);
     setTopCount(validCount);
-    setSelectedWinners(candidates.slice(0, validCount));
   };
 
   const handlePublish = async () => {
@@ -80,7 +125,7 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
 
       // VERSION 2: Format data for new backend endpoint with full winner info
       const topWinners = selectedWinners.map((winner) => ({
-        userId: winner.userId, // User ID
+        userId: winner.userId,
         score: winner.score,
         // Include profile data for better display in results
         studentName: winner.studentName,
@@ -89,13 +134,19 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
         rollNumber: winner.rollNumber,
       }));
 
-      console.log("Publishing with topWinners:", topWinners); // Debug log
+      console.log(
+        "Publishing with topWinners:",
+        topWinners,
+        "Group:",
+        selectedGroup,
+      ); // Debug log
 
       const response = await axios.post(
         `/api/admin/quizzes/${quizId}/publish-results`,
         {
           topWinners,
           topCount: topWinners.length,
+          group: selectedGroup, // Include group name
         },
       );
 
@@ -111,6 +162,10 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
       setLoading(false);
     }
   };
+
+  const maxCountForGroup = candidates.filter((c) =>
+    selectedGroup === "সকল" ? true : c.group === selectedGroup,
+  ).length;
 
   return (
     <form
@@ -133,10 +188,37 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
       {/* VERSION 2: Info about publishing mode */}
       <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <p className="text-sm text-blue-900">
-          <strong>V2 পদ্ধতি:</strong> সর্বোচ্চ স্কোর অনুযায়ী বিজয়ী নির্বাচন
-          করুন। নির্বাচিত প্রতিটি বিজয়ীর উত্তর আনলক করা হবে।
+          <strong>গ্রুপ ভিত্তিক ফলাফল:</strong> প্রথমে একটি গ্রুপ নির্বাচন করুন,
+          তারপর সেই গ্রুপ থেকে বিজয়ী নির্বাচন করুন।
         </p>
       </div>
+
+      {/* Group Selector - Tabs */}
+      {!preparing && (
+        <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+          <label className="font-semibold text-purple-900 block mb-3">
+            গ্রুপ নির্বাচন করুন:
+          </label>
+          <div className="tabs tabs-bordered gap-1 flex flex-wrap">
+            {Object.entries(GROUPS).map(([groupName, groupData]) => (
+              <a
+                key={groupName}
+                onClick={() => {
+                  setSelectedGroup(groupName);
+                  setTopCount(10);
+                }}
+                className={`tab tab-lg ${
+                  selectedGroup === groupName
+                    ? "tab-active bg-purple-600 text-white"
+                    : "bg-white text-purple-900 hover:bg-purple-100"
+                }`}
+              >
+                {groupData.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Top Count Selector */}
       {!preparing && candidates.length > 0 && (
@@ -147,13 +229,13 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
           <input
             type="number"
             min="1"
-            max={candidates.length}
+            max={maxCountForGroup}
             value={topCount}
             onChange={handleTopCountChange}
             className="input input-sm input-bordered w-20 text-center"
           />
           <span className="text-sm text-purple-700">
-            (সর্বোচ্চ: {candidates.length})
+            (সর্বোচ্চ: {maxCountForGroup})
           </span>
         </div>
       )}
@@ -215,10 +297,11 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
 
           <div className="p-4 bg-blue-50 border-t text-sm text-gray-700">
             <p>
-              <strong>মোট বিজয়ী:</strong> {selectedWinners.length}
+              <strong>নির্বাচিত বিজয়ী ({selectedGroup}):</strong>{" "}
+              {selectedWinners.length}
             </p>
             <p className="mt-2">
-              💡 পরামর্শ: শীর্ষ 3-5 জন বিজয়ী নির্বাচন করুন।
+              💡 পরামর্শ: প্রতি গ্রুপে ৩-৫ জন বিজয়ী নির্বাচন করুন।
             </p>
           </div>
         </div>
@@ -227,7 +310,11 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
       {/* Empty State */}
       {!preparing && selectedWinners.length === 0 && (
         <div className="text-center py-10 text-gray-500">
-          <p>কোনো প্রার্থী পাওয়া যায়নি</p>
+          <p>
+            {selectedGroup === "সকল"
+              ? "কোনো প্রার্থী পাওয়া যায়নি"
+              : `${GROUPS[selectedGroup].label} এ কোনো প্রার্থী পাওয়া যায়নি`}
+          </p>
         </div>
       )}
 
@@ -251,7 +338,7 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
           {loading && (
             <span className="loading loading-spinner loading-sm"></span>
           )}
-          ফলাফল প্রকাশ করুন
+          {selectedGroup} গ্রুপের ফলাফল প্রকাশ করুন
         </button>
       </div>
     </form>
