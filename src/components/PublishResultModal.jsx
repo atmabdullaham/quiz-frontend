@@ -28,6 +28,17 @@ const getGroupByClass = (className) => {
   return null;
 };
 
+// Helper function to format time taken (in seconds to readable format)
+const formatTimeTaken = (seconds) => {
+  if (!seconds) return "—";
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  if (mins > 0) {
+    return `${mins}মি ${secs}সে`;
+  }
+  return `${secs}সে`;
+};
+
 const GROUP_CONFIG = {
   স্বপ্নিল: {
     name: "১ম গ্রুপ - স্বপ্নিল (৪র্থ-৭ম শ্রেণি)",
@@ -96,6 +107,9 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
         schoolName: sub.userId?.profile?.schoolName || "Unknown",
         className: sub.userId?.profile?.className || "Unknown",
         rollNumber: sub.userId?.profile?.rollNumber || "",
+        address: sub.userId?.profile?.address || "—",
+        phoneNumber: sub.userId?.profile?.mobileNumber || "—",
+        schoolName: sub.userId?.profile?.schoolName || "—",
         group: getGroupByClass(sub.userId?.profile?.className),
       }));
 
@@ -384,8 +398,11 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
                           <th className="whitespace-nowrap">অবস্থান</th>
                           <th className="whitespace-nowrap">শিক্ষার্থীর নাম</th>
                           <th className="whitespace-nowrap">স্কোর</th>
-                          <th className="whitespace-nowrap">শ্রেণি</th>
+                          <th className="whitespace-nowrap">সময়</th>
                           <th className="whitespace-nowrap">প্রতিষ্ঠান</th>
+                          <th className="whitespace-nowrap">শ্রেণি</th>
+                          <th className="whitespace-nowrap">ফোন</th>
+                          <th className="whitespace-nowrap">ঠিকানা</th>
                           <th className="whitespace-nowrap text-center">
                             নির্বাচন
                           </th>
@@ -414,11 +431,23 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
                               <td className="font-bold text-blue-600 whitespace-nowrap">
                                 {candidate.score}
                               </td>
+                              <td className="whitespace-nowrap text-xs bg-blue-50 rounded px-2 py-1">
+                                {formatTimeTaken(candidate.timeTaken)}
+                              </td>
+                              <td className="whitespace-nowrap">
+                                {candidate.schoolName}
+                              </td>
                               <td className="whitespace-nowrap">
                                 {candidate.className}
                               </td>
                               <td className="text-xs text-gray-600 whitespace-nowrap">
-                                {candidate.schoolName}
+                                {candidate.phoneNumber}
+                              </td>
+                              <td
+                                className="text-xs text-gray-600 whitespace-nowrap max-w-xs truncate"
+                                title={candidate.address}
+                              >
+                                {candidate.address}
                               </td>
                               <td className="text-center whitespace-nowrap">
                                 <button
