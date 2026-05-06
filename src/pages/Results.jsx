@@ -4,6 +4,34 @@ import { Link } from "react-router-dom";
 import NoticeMarquee from "../components/NoticeMarquee";
 import axios from "../utils/axios";
 
+// Group configuration - same as PublishResultModal
+const GROUP_CONFIG = {
+  স্বপ্নিল: {
+    name: "১ম গ্রুপ - স্বপ্নিল (৪র্থ-৭ম শ্রেণি)",
+    color: "bg-blue-50",
+    borderColor: "border-blue-200",
+    textColor: "text-blue-900",
+    badgeBg: "bg-blue-100",
+    badgeText: "text-blue-700",
+  },
+  প্রত্যয়: {
+    name: "২য় গ্রুপ - প্রত্যয় (৮ম-১০ম শ্রেণি)",
+    color: "bg-green-50",
+    borderColor: "border-green-200",
+    textColor: "text-green-900",
+    badgeBg: "bg-green-100",
+    badgeText: "text-green-700",
+  },
+  অগ্রপথিক: {
+    name: "৩য় গ্রুপ - অগ্রপথিক (১১শ-১২শ)",
+    color: "bg-purple-50",
+    borderColor: "border-purple-200",
+    textColor: "text-purple-900",
+    badgeBg: "bg-purple-100",
+    badgeText: "text-purple-700",
+  },
+};
+
 const Results = () => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,6 +61,8 @@ const Results = () => {
       const mappedResults = Array.isArray(response.data)
         ? response.data.map((result) => ({
             ...result,
+            // For group-wise results, results object is already present
+            results: result.results || undefined,
             // Normalize winners: use topWinners if winners doesn't exist
             winners: result.winners || result.topWinners || [],
             // Ensure quizId has default values
@@ -75,10 +105,36 @@ const Results = () => {
     };
   };
 
-  const totalWinners = results.reduce(
-    (sum, result) => sum + (result.winners?.length || 0),
-    0,
-  );
+  // Helper function to organize results by group (if available) or use flat list
+  const getDisplayWinners = (result) => {
+    // If result has group-wise data, return organized structure
+    if (result.results && typeof result.results === "object") {
+      return {
+        isGroupwise: true,
+        groups: result.results,
+      };
+    }
+    // Otherwise use flat winners list
+    return {
+      isGroupwise: false,
+      winners: result.winners || result.topWinners || [],
+    };
+  };
+
+  const totalWinners = results.reduce((sum, result) => {
+    if (result.results && typeof result.results === "object") {
+      // Group-wise format: count all winners from all groups
+      return (
+        sum +
+        Object.values(result.results).reduce((groupSum, group) => {
+          return groupSum + (group.topWinners?.length || 0);
+        }, 0)
+      );
+    } else {
+      // Flat format: count from topWinners or winners
+      return sum + (result.winners?.length || result.topWinners?.length || 0);
+    }
+  }, 0);
 
   const latestPublishedAt = results.length
     ? results
@@ -173,85 +229,148 @@ const Results = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {results.map((result) => (
-              <Link
-                key={result._id}
-                to={`/published-result/${result.quizId?._id}`}
-                className="group"
-              >
-                <article className="relative overflow-hidden md:rounded-2xl border border-slate-200 bg-white  transition-all duration-300 ">
-                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+            {results.map((result) => {
+              const displayData = getDisplayWinners(result);
 
-                  <div className="p-4 md:p-7">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                          <FaCalendarAlt />
-                          {new Date(result.publishedAt).toLocaleDateString(
-                            "bn-BD",
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
+              return (
+                <Link
+                  key={result._id}
+                  to={`/published-result/${result.quizId?._id}`}
+                  className="group"
+                >
+                  <article className="relative overflow-hidden md:rounded-2xl border border-slate-200 bg-white transition-all duration-300 ">
+                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+
+                    <div className="p-4 md:p-7">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                          <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                            <FaCalendarAlt />
+                            {new Date(result.publishedAt).toLocaleDateString(
+                              "bn-BD",
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )}
+                          </div>
+
+                          <h3 className="mt-4 text-2xl font-black leading-tight text-slate-900 group-hover:text-blue-700">
+                            {result.quizId?.title || "অজানা কুইজ"}
+                          </h3>
+                        </div>
+
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg">
+                          <FaMedal className="text-2xl" />
+                        </div>
+                      </div>
+
+                      {/* Display Group-wise Results */}
+                      {displayData.isGroupwise ? (
+                        <div className="mt-6 space-y-4">
+                          {Object.entries(displayData.groups).map(
+                            ([groupKey, groupData]) => {
+                              const config = GROUP_CONFIG[groupKey];
+                              const winners = groupData.topWinners || [];
+
+                              // Skip empty groups
+                              if (winners.length === 0) return null;
+
+                              return (
+                                <div
+                                  key={groupKey}
+                                  className={`p-3 rounded-xl border-2 ${config?.borderColor} ${config?.color}`}
+                                >
+                                  <p
+                                    className={`text-xs font-bold mb-2 ${config?.textColor}`}
+                                  >
+                                    {config?.name || groupKey}
+                                  </p>
+                                  <div className="space-y-2">
+                                    {winners.slice(0, 3).map((winner, idx) => {
+                                      const winnerInfo = getWinnerInfo(winner);
+                                      return (
+                                        <div
+                                          key={idx}
+                                          className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 ring-1 ring-slate-100 text-sm"
+                                        >
+                                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 text-sm shadow-sm">
+                                            {idx === 0 && "🥇"}
+                                            {idx === 1 && "🥈"}
+                                            {idx === 2 && "🥉"}
+                                          </div>
+                                          <div className="min-w-0 flex-1">
+                                            <p className="truncate font-semibold text-slate-900">
+                                              {winnerInfo.studentName}
+                                            </p>
+                                            <p className="truncate text-xs text-slate-500">
+                                              {winnerInfo.className}
+                                            </p>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              );
                             },
                           )}
                         </div>
-
-                        <h3 className="mt-4 text-2xl font-black leading-tight text-slate-900 group-hover:text-blue-700">
-                          {result.quizId?.title || "অজানা কুইজ"}
-                        </h3>
-                      </div>
-
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg">
-                        <FaMedal className="text-2xl" />
-                      </div>
-                    </div>
-
-                    <div className="mt-6 flex  flex-wrap gap-3">
-                      <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700">
-                        {result.publishType === "classwise"
-                          ? "শ্রেণী অনুযায়ী"
-                          : "সর্বোচ্চ স্কোর"}
-                      </span>
-                      <span className="inline-flex items-center rounded-full bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
-                        {result.winners?.length || 0} জন বিজয়ী
-                      </span>
-                    </div>
-
-                    <div className="mt-6 space-y-3">
-                      {(result.winners || []).slice(0, 3).map((winner, idx) => {
-                        const winnerInfo = getWinnerInfo(winner);
-                        return (
-                          <div
-                            key={idx}
-                            className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3 ring-1 ring-slate-100"
-                          >
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-lg shadow-sm ring-1 ring-slate-200">
-                              {idx === 0 && "🥇"}
-                              {idx === 1 && "🥈"}
-                              {idx === 2 && "🥉"}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate font-semibold text-slate-900">
-                                {winnerInfo.studentName}
-                              </p>
-                              <p className="truncate text-xs text-slate-500">
-                                {winnerInfo.className} • {winnerInfo.schoolName}
-                              </p>
-                            </div>
+                      ) : (
+                        /* Display Flat Winners List (Backward Compatibility) */
+                        <>
+                          <div className="mt-6 flex flex-wrap gap-3">
+                            <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700">
+                              {result.publishType === "classwise"
+                                ? "শ্রেণী অনুযায়ী"
+                                : "সর্বোচ্চ স্কোর"}
+                            </span>
+                            <span className="inline-flex items-center rounded-full bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
+                              {displayData.winners?.length || 0} জন বিজয়ী
+                            </span>
                           </div>
-                        );
-                      })}
-                    </div>
 
-                    <div className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-blue-700">
-                      সম্পূর্ণ ফলাফল দেখুন
-                      <FaArrowRight className="transition-transform group-hover:translate-x-1" />
+                          <div className="mt-6 space-y-3">
+                            {displayData.winners
+                              .slice(0, 3)
+                              .map((winner, idx) => {
+                                const winnerInfo = getWinnerInfo(winner);
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3 ring-1 ring-slate-100"
+                                  >
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-lg shadow-sm ring-1 ring-slate-200">
+                                      {idx === 0 && "🥇"}
+                                      {idx === 1 && "🥈"}
+                                      {idx === 2 && "🥉"}
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <p className="truncate font-semibold text-slate-900">
+                                        {winnerInfo.studentName}
+                                      </p>
+                                      <p className="truncate text-xs text-slate-500">
+                                        {winnerInfo.className} •{" "}
+                                        {winnerInfo.schoolName}
+                                      </p>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                          </div>
+                        </>
+                      )}
+
+                      <div className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-blue-700">
+                        সম্পূর্ণ ফলাফল দেখুন
+                        <FaArrowRight className="transition-transform group-hover:translate-x-1" />
+                      </div>
                     </div>
-                  </div>
-                </article>
-              </Link>
-            ))}
+                  </article>
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>

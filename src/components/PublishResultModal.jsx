@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Toast from "react-hot-toast";
-import { FaMedal, FaTrash } from "react-icons/fa";
+import { FaCheckCircle, FaMedal } from "react-icons/fa";
 import axios from "../utils/axios";
 
 // Helper function to determine group based on class
@@ -28,48 +28,62 @@ const getGroupByClass = (className) => {
   return null;
 };
 
-const GROUPS = {
-  সকল: { label: "সকল গ্রুপ", key: "all" },
-  স্বপ্নিল: { label: "१ম গ্রুপ - স্বপ্নিল (४র्थ-७ম)", key: "swapnil" },
-  প্রত্যয়: { label: "२य় গ্রুপ - প্রত্যয় (०८ম-०१०ম)", key: "prottoy" },
-  অগ্রপথিক: { label: "०३য় গ্রুপ - অগ্রপথিক (००११শ-००१२শ)", key: "ogropothik" },
+const GROUP_CONFIG = {
+  স্বপ্নিল: {
+    name: "১ম গ্রুপ - স্বপ্নিল (৪র্থ-৭ম শ্রেণি)",
+    showCount: 5,
+    requiredCount: 2,
+    color: "bg-blue-50",
+    borderColor: "border-blue-200",
+    textColor: "text-blue-900",
+    buttonColor: "btn-primary",
+  },
+  প্রত্যয়: {
+    name: "২য় গ্রুপ - প্রত্যয় (০৮ম-০১০ম শ্রেণি)",
+    showCount: 5,
+    requiredCount: 2,
+    color: "bg-green-50",
+    borderColor: "border-green-200",
+    textColor: "text-green-900",
+    buttonColor: "btn-success",
+  },
+  অগ্রপথিক: {
+    name: "৩য় গ্রুপ - অগ্রপথিক (১১শ-১২শ)",
+    showCount: 3,
+    requiredCount: 1,
+    color: "bg-purple-50",
+    borderColor: "border-purple-200",
+    textColor: "text-purple-900",
+    buttonColor: "btn-warning",
+  },
 };
 
 const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
   const [candidates, setCandidates] = useState([]);
-  const [selectedWinners, setSelectedWinners] = useState([]);
   const [loading, setLoading] = useState(false);
   const [preparing, setPreparing] = useState(true);
   const [error, setError] = useState("");
-  const [topCount, setTopCount] = useState(10);
-  const [selectedGroup, setSelectedGroup] = useState("সকল");
+
+  // State for each group's selected winners
+  const [selectedWinnersSwapnil, setSelectedWinnersSwapnil] = useState([]);
+  const [selectedWinnersProttoy, setSelectedWinnersProttoy] = useState([]);
+  const [selectedWinnersOgropothik, setSelectedWinnersOgropothik] = useState(
+    [],
+  );
 
   useEffect(() => {
     prepareResults();
   }, [quizId]);
 
-  // Update filtered winners when group or topCount changes
-  useEffect(() => {
-    const filtered =
-      selectedGroup === "সকল"
-        ? candidates
-        : candidates.filter((c) => c.group === selectedGroup);
-
-    setSelectedWinners(filtered.slice(0, topCount));
-  }, [selectedGroup, topCount, candidates]);
-
-  // VERSION 2: Simplified - no more publishType
   const prepareResults = async () => {
     try {
       setPreparing(true);
       setError("");
 
-      // Get all submissions for the quiz
       const response = await axios.get(
         `/api/admin/quizzes/${quizId}/prepare-publish/overall`,
       );
 
-      // FIX: Properly map nested response structure with group assignment
       const mapped = response.data.map((sub) => ({
         _id: sub._id,
         quizId: sub.quizId,
@@ -82,11 +96,10 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
         schoolName: sub.userId?.profile?.schoolName || "Unknown",
         className: sub.userId?.profile?.className || "Unknown",
         rollNumber: sub.userId?.profile?.rollNumber || "",
-        group: getGroupByClass(sub.userId?.profile?.className), // Assign group
+        group: getGroupByClass(sub.userId?.profile?.className),
       }));
 
       setCandidates(mapped);
-      setSelectedWinners(mapped.slice(0, topCount));
       setError("");
     } catch (err) {
       console.error("Error preparing results:", err);
@@ -101,56 +114,128 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
     }
   };
 
-  const handleRemoveCandidate = (id) => {
-    setSelectedWinners(selectedWinners.filter((c) => c._id !== id));
+  const getTopCandidatesForGroup = (groupName) => {
+    return candidates
+      .filter((c) => c.group === groupName)
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.timeTaken - b.timeTaken; // Tiebreaker: less time is better
+      })
+      .slice(0, GROUP_CONFIG[groupName].showCount);
   };
 
-  const handleTopCountChange = (e) => {
-    const newCount = parseInt(e.target.value) || 10;
-    const maxCount = candidates.filter((c) =>
-      selectedGroup === "সকল" ? true : c.group === selectedGroup,
-    ).length;
-    const validCount = Math.min(Math.max(newCount, 1), maxCount);
-    setTopCount(validCount);
+  // Get required count for a group (adjusted if fewer candidates than required)
+  const getRequiredCountForGroup = (groupName) => {
+    const candidates = getTopCandidatesForGroup(groupName);
+    const configured = GROUP_CONFIG[groupName].requiredCount;
+    // If fewer candidates than required, use candidate count instead
+    return Math.min(configured, candidates.length);
+  };
+
+  // Check if a group is "ready" (0 candidates = auto-ready, or has required winners)
+  const isGroupReady = (groupName) => {
+    const candidates = getTopCandidatesForGroup(groupName);
+    const required = getRequiredCountForGroup(groupName);
+    let selectedWinners;
+
+    if (groupName === "স্বপ্নিল") selectedWinners = selectedWinnersSwapnil;
+    else if (groupName === "প্রত্যয়") selectedWinners = selectedWinnersProttoy;
+    else selectedWinners = selectedWinnersOgropothik;
+
+    // If no candidates, group is auto-ready
+    if (candidates.length === 0) return true;
+    // Otherwise, must have required count
+    return selectedWinners.length === required;
+  };
+
+  // Add candidate to selected winners
+  const addCandidate = (groupName, candidate) => {
+    const required = getRequiredCountForGroup(groupName);
+    let currentSelected;
+    let setFunction;
+
+    if (groupName === "স্বপ্নিল") {
+      currentSelected = selectedWinnersSwapnil;
+      setFunction = setSelectedWinnersSwapnil;
+    } else if (groupName === "প্রত্যয়") {
+      currentSelected = selectedWinnersProttoy;
+      setFunction = setSelectedWinnersProttoy;
+    } else if (groupName === "অগ্রপথিক") {
+      currentSelected = selectedWinnersOgropothik;
+      setFunction = setSelectedWinnersOgropothik;
+    }
+
+    if (currentSelected.length >= required) {
+      Toast.error(
+        `${groupName} এ সর্বোচ্চ ${required} জন নির্বাচন করতে পারবেন`,
+      );
+      return;
+    }
+    if (currentSelected.find((c) => c._id === candidate._id)) {
+      Toast.error("এই শিক্ষার্থী ইতিমধ্যে নির্বাচিত আছে");
+      return;
+    }
+    setFunction([...currentSelected, candidate]);
+  };
+
+  // Remove candidate from selected winners
+  const removeCandidate = (groupName, candidateId) => {
+    if (groupName === "স্বপ্নিল") {
+      setSelectedWinnersSwapnil(
+        selectedWinnersSwapnil.filter((c) => c._id !== candidateId),
+      );
+    } else if (groupName === "প্রত্যয়") {
+      setSelectedWinnersProttoy(
+        selectedWinnersProttoy.filter((c) => c._id !== candidateId),
+      );
+    } else if (groupName === "অগ্রপথিক") {
+      setSelectedWinnersOgropothik(
+        selectedWinnersOgropothik.filter((c) => c._id !== candidateId),
+      );
+    }
   };
 
   const handlePublish = async () => {
-    if (selectedWinners.length === 0) {
-      Toast.error("অন্তত একজন বিজয়ী নির্বাচন করুন");
-      return;
-    }
-
+    // Button is only enabled if all validations passed, so we can publish directly
     try {
       setLoading(true);
 
-      // VERSION 2: Format data for new backend endpoint with full winner info
-      const topWinners = selectedWinners.map((winner) => ({
-        userId: winner.userId,
-        score: winner.score,
-        // Include profile data for better display in results
-        studentName: winner.studentName,
-        schoolName: winner.schoolName,
-        className: winner.className,
-        rollNumber: winner.rollNumber,
-      }));
+      // Format data for all groups
+      const formatWinners = (winners) =>
+        winners.map((w) => ({
+          userId: w.userId,
+          score: w.score,
+          studentName: w.studentName,
+          schoolName: w.schoolName,
+          className: w.className,
+          rollNumber: w.rollNumber,
+        }));
 
-      console.log(
-        "Publishing with topWinners:",
-        topWinners,
-        "Group:",
-        selectedGroup,
-      ); // Debug log
+      const payload = {
+        results: {
+          স্বপ্নিল: {
+            group: "স্বপ্নিল",
+            topWinners: formatWinners(selectedWinnersSwapnil),
+          },
+          প্রত্যয়: {
+            group: "প্রত্যय়",
+            topWinners: formatWinners(selectedWinnersProttoy),
+          },
+          অগ্রপথিক: {
+            group: "অগ্রপথিক",
+            topWinners: formatWinners(selectedWinnersOgropothik),
+          },
+        },
+      };
+
+      console.log("Publishing all groups:", payload);
 
       const response = await axios.post(
         `/api/admin/quizzes/${quizId}/publish-results`,
-        {
-          topWinners,
-          topCount: topWinners.length,
-          group: selectedGroup, // Include group name
-        },
+        payload,
       );
 
-      Toast.success("ফলাফল সফলভাবে প্রকাশিত হয়েছে!");
+      Toast.success("সকল গ্রুপের ফলাফল সফলভাবে প্রকাশিত হয়েছে!");
       if (onPublished) {
         onPublished(response.data.result);
       }
@@ -163,14 +248,18 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
     }
   };
 
-  const maxCountForGroup = candidates.filter((c) =>
-    selectedGroup === "সকল" ? true : c.group === selectedGroup,
-  ).length;
+  const isAllGroupsReady =
+    isGroupReady("স্বপ্নিল") &&
+    isGroupReady("প্রত্যয়") &&
+    isGroupReady("অগ্রপথিক") &&
+    (selectedWinnersSwapnil.length > 0 ||
+      selectedWinnersProttoy.length > 0 ||
+      selectedWinnersOgropothik.length > 0);
 
   return (
     <form
       method="dialog"
-      className="modal-box w-full max-w-2xl bg-white text-gray-800"
+      className="modal-box w-full max-w-4xl bg-white text-gray-800 max-h-[90vh] overflow-y-auto"
     >
       <button
         type="button"
@@ -182,63 +271,17 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
 
       <div className="flex items-center gap-3 mb-6">
         <FaMedal className="text-3xl text-yellow-500" />
-        <h3 className="text-2xl font-bold">{quizTitle} - ফলাফল প্রকাশ করুন</h3>
+        <h3 className="text-2xl font-bold">{quizTitle} - সকল গ্রুপের ফলাফল</h3>
       </div>
 
-      {/* VERSION 2: Info about publishing mode */}
+      {/* Info Box */}
       <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <p className="text-sm text-blue-900">
-          <strong>গ্রুপ ভিত্তিক ফলাফল:</strong> প্রথমে একটি গ্রুপ নির্বাচন করুন,
-          তারপর সেই গ্রুপ থেকে বিজয়ী নির্বাচন করুন।
+          <strong>নির্দেশনা:</strong> প্রতিটি গ্রুপ থেকে প্রয়োজনীয় সংখ্যক
+          বিজয়ী নির্বাচন করুন। সব গ্রুপের নির্বাচন সম্পন্ন হলে "সকল ফলাফল
+          প্রকাশ করুন" বাটন ক্লিক করুন।
         </p>
       </div>
-
-      {/* Group Selector - Tabs */}
-      {!preparing && (
-        <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-          <label className="font-semibold text-purple-900 block mb-3">
-            গ্রুপ নির্বাচন করুন:
-          </label>
-          <div className="tabs tabs-bordered gap-1 flex flex-wrap">
-            {Object.entries(GROUPS).map(([groupName, groupData]) => (
-              <a
-                key={groupName}
-                onClick={() => {
-                  setSelectedGroup(groupName);
-                  setTopCount(10);
-                }}
-                className={`tab tab-lg ${
-                  selectedGroup === groupName
-                    ? "tab-active bg-purple-600 text-white"
-                    : "bg-white text-purple-900 hover:bg-purple-100"
-                }`}
-              >
-                {groupData.label}
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Top Count Selector */}
-      {!preparing && candidates.length > 0 && (
-        <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg flex items-center gap-4">
-          <label className="font-semibold text-purple-900">
-            শীর্ষ বিজয়ী সংখ্যা:
-          </label>
-          <input
-            type="number"
-            min="1"
-            max={maxCountForGroup}
-            value={topCount}
-            onChange={handleTopCountChange}
-            className="input input-sm input-bordered w-20 text-center"
-          />
-          <span className="text-sm text-purple-700">
-            (সর্বোচ্চ: {maxCountForGroup})
-          </span>
-        </div>
-      )}
 
       {/* Loading State */}
       {preparing && (
@@ -254,72 +297,176 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
         </div>
       )}
 
-      {/* Candidates List */}
-      {!preparing && selectedWinners.length > 0 && (
-        <div className="max-h-96 overflow-y-auto mb-6 border rounded-lg">
-          <table className="table table-xs w-full">
-            <thead className="sticky top-0 bg-gray-100">
-              <tr>
-                <th>#</th>
-                <th>নাম</th>
-                <th>স্কুল/প্রতিষ্ঠান</th>
-                <th>শ্রেণী</th>
-                <th>স্কোর</th>
-                <th>অ্যাকশন</th>
-              </tr>
-            </thead>
-            <tbody>
-              {selectedWinners.map((winner, idx) => (
-                <tr key={winner._id} className="hover:bg-gray-50">
-                  <td className="font-bold">
-                    {idx === 0 && "🥇"}
-                    {idx === 1 && "🥈"}
-                    {idx === 2 && "🥉"}
-                    {idx > 2 && `${idx + 1}`}
-                  </td>
-                  <td>{winner.studentName}</td>
-                  <td className="text-xs truncate">{winner.schoolName}</td>
-                  <td>{winner.className}</td>
-                  <td className="font-bold text-blue-600">{winner.score}</td>
-                  <td>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveCandidate(winner._id)}
-                      className="btn btn-xs btn-ghost text-red-600 hover:bg-red-50"
-                    >
-                      <FaTrash />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* All Groups Sections */}
+      {!preparing && (
+        <div className="space-y-6">
+          {Object.entries(GROUP_CONFIG).map(([groupName, config]) => {
+            const topCandidates = getTopCandidatesForGroup(groupName);
+            let selectedWinners;
+            if (groupName === "স্বপ্নিল")
+              selectedWinners = selectedWinnersSwapnil;
+            else if (groupName === "প্রত্যয়")
+              selectedWinners = selectedWinnersProttoy;
+            else selectedWinners = selectedWinnersOgropothik;
 
-          <div className="p-4 bg-blue-50 border-t text-sm text-gray-700">
-            <p>
-              <strong>নির্বাচিত বিজয়ী ({selectedGroup}):</strong>{" "}
-              {selectedWinners.length}
-            </p>
-            <p className="mt-2">
-              💡 পরামর্শ: প্রতি গ্রুপে ৩-৫ জন বিজয়ী নির্বাচন করুন।
-            </p>
-          </div>
-        </div>
-      )}
+            const hasNoCandidates = topCandidates.length === 0;
+            const requiredCount = getRequiredCountForGroup(groupName);
+            const isReady = isGroupReady(groupName);
 
-      {/* Empty State */}
-      {!preparing && selectedWinners.length === 0 && (
-        <div className="text-center py-10 text-gray-500">
-          <p>
-            {selectedGroup === "সকল"
-              ? "কোনো প্রার্থী পাওয়া যায়নি"
-              : `${GROUPS[selectedGroup].label} এ কোনো প্রার্থী পাওয়া যায়নি`}
-          </p>
+            return (
+              <div
+                key={groupName}
+                className={`p-4 border rounded-lg ${config.color} ${config.borderColor} ${
+                  hasNoCandidates ? "opacity-75" : ""
+                }`}
+              >
+                {/* Group Header */}
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <h4 className={`text-lg font-bold ${config.textColor}`}>
+                      {config.name}
+                    </h4>
+                    <p className={`text-sm ${config.textColor}`}>
+                      {hasNoCandidates ? (
+                        <span className="font-semibold">
+                          এই গ্রুপে কোনো অংশগ্রহণকারী নেই - স্বয়ংক্রিয়ভাবে
+                          এড়িয়ে যাবে
+                        </span>
+                      ) : (
+                        <span>
+                          শীর্ষ {config.showCount} প্রার্থী থেকে{" "}
+                          {requiredCount === config.requiredCount ? (
+                            <span>{config.requiredCount} জন</span>
+                          ) : (
+                            <span className="font-bold text-orange-600">
+                              {requiredCount} জন নির্বাচন করুন
+                              <span className="text-xs ml-1">
+                                (শুধুমাত্র {topCandidates.length} জন উপলব্ধ)
+                              </span>
+                            </span>
+                          )}{" "}
+                          নির্বাচন করুন
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    {hasNoCandidates ? (
+                      <div>
+                        <div
+                          className={`text-xl font-bold ${config.textColor}`}
+                        >
+                          N/A
+                        </div>
+                        <FaCheckCircle className="text-orange-500 text-2xl mt-1" />
+                      </div>
+                    ) : (
+                      <div>
+                        <div
+                          className={`text-2xl font-bold ${config.textColor}`}
+                        >
+                          {selectedWinners.length}/{requiredCount}
+                        </div>
+                        {isReady && (
+                          <FaCheckCircle className="text-green-600 text-2xl mt-1" />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Candidates Grid */}
+                {topCandidates.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    {topCandidates.map((candidate, idx) => {
+                      const isSelected = selectedWinners.find(
+                        (w) => w._id === candidate._id,
+                      );
+                      return (
+                        <div
+                          key={candidate._id}
+                          className={`p-3 border rounded flex justify-between items-center ${
+                            isSelected
+                              ? "bg-green-100 border-green-400"
+                              : "bg-white border-gray-300"
+                          }`}
+                        >
+                          <div className="flex-1">
+                            <div className="font-semibold text-sm">
+                              {idx === 0 && "🥇 "}
+                              {idx === 1 && "🥈 "}
+                              {idx === 2 && "🥉 "}
+                              {candidate.studentName}
+                            </div>
+                            <div className="text-xs text-gray-600">
+                              স্কোর:{" "}
+                              <span className="font-bold">
+                                {candidate.score}
+                              </span>{" "}
+                              | শ্রেণী: {candidate.className}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {candidate.schoolName}
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (isSelected) {
+                                removeCandidate(groupName, candidate._id);
+                              } else {
+                                addCandidate(groupName, candidate);
+                              }
+                            }}
+                            disabled={loading}
+                            className={`btn btn-xs ml-2 ${
+                              isSelected ? "btn-error" : config.buttonColor
+                            }`}
+                          >
+                            {isSelected ? "❌" : "✓"}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 text-gray-500">
+                    <p className="font-semibold">এই গ্রুপে অংশগ্রহণকারী নেই</p>
+                    <p className="text-sm mt-1">
+                      ফলাফল প্রকাশের সময় এই গ্রুপ বাদ দেওয়া হবে
+                    </p>
+                  </div>
+                )}
+
+                {/* Selected Winners List */}
+                {selectedWinners.length > 0 && (
+                  <div className="bg-white p-3 rounded border-t mt-4">
+                    <p className="text-sm font-semibold mb-2">
+                      নির্বাচিত ({selectedWinners.length}/{requiredCount}):
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedWinners.map((winner, idx) => (
+                        <div
+                          key={winner._id}
+                          className="bg-green-100 text-green-900 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+                        >
+                          {idx === 0 && "🥇"}
+                          {idx === 1 && "🥈"}
+                          {idx === 2 && "🥉"}
+                          {winner.studentName}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
       {/* Action Buttons */}
-      <div className="modal-action mt-6">
+      <div className="modal-action mt-8">
         <button
           type="button"
           onClick={onClose}
@@ -332,13 +479,15 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
         <button
           type="button"
           onClick={handlePublish}
-          disabled={loading || selectedWinners.length === 0 || preparing}
+          disabled={loading || !isAllGroupsReady || preparing}
           className="btn btn-primary gap-2"
         >
           {loading && (
             <span className="loading loading-spinner loading-sm"></span>
           )}
-          {selectedGroup} গ্রুপের ফলাফল প্রকাশ করুন
+          {isAllGroupsReady
+            ? "সকল ফলাফল প্রকাশ করুন ✓"
+            : "সকল গ্রুপ পূর্ণ করুন"}
         </button>
       </div>
     </form>
