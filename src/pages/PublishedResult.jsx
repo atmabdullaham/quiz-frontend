@@ -10,6 +10,10 @@ import {
 import { Link, useParams } from "react-router-dom";
 import ResultCard from "../components/ResultCard";
 import axios from "../utils/axios";
+import {
+  classToBengali,
+  englishToBengaliNumerals,
+} from "../utils/bengaliTranslations";
 import { downloadPNG } from "../utils/downloadUtils";
 
 const PublishedResult = () => {
@@ -263,10 +267,11 @@ const PublishedResult = () => {
                             {winner.schoolName || "প্রতিষ্ঠান নেই"}
                           </span>
                           <span className="rounded-full bg-white px-3 py-1 ring-1 ring-slate-200">
-                            {winner.className || "শ্রেণী নেই"}
+                            {classToBengali(winner.className) || "শ্রেণী নেই"}
                           </span>
                           <span className="rounded-full bg-white px-3 py-1 ring-1 ring-slate-200">
-                            রোল {winner.rollNumber || "—"}
+                            রোল{" "}
+                            {englishToBengaliNumerals(winner.rollNumber) || "—"}
                           </span>
                         </div>
                       </div>
@@ -313,10 +318,10 @@ const PublishedResult = () => {
                         {winner.schoolName || "প্রতিষ্ঠান নেই"}
                       </span>
                       <span className="rounded-full bg-white px-3 py-1 ring-1 ring-slate-200">
-                        {winner.className || "শ্রেণী নেই"}
+                        {classToBengali(winner.className) || "শ্রেণী নেই"}
                       </span>
                       <span className="rounded-full bg-white px-3 py-1 ring-1 ring-slate-200">
-                        রোল {winner.rollNumber || "—"}
+                        রোল {englishToBengaliNumerals(winner.rollNumber) || "—"}
                       </span>
                     </div>
                   </div>

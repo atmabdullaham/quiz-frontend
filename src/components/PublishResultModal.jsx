@@ -223,6 +223,7 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
           schoolName: w.schoolName,
           className: w.className,
           rollNumber: w.rollNumber,
+          phoneNumber: w.phoneNumber,
         }));
 
       const payload = {

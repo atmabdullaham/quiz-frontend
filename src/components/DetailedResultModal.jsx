@@ -1,4 +1,8 @@
 import { FaTimes } from "react-icons/fa";
+import {
+  classToBengali,
+  englishToBengaliNumerals,
+} from "../utils/bengaliTranslations";
 
 const DetailedResultModal = ({ result, onClose }) => {
   if (!result) return null;
@@ -8,7 +12,22 @@ const DetailedResultModal = ({ result, onClose }) => {
     overall: "সর্বোচ্চ স্কোর",
   };
 
-  const winners = Array.isArray(result.winners) ? result.winners : [];
+  // Extract winners from both group-wise and legacy formats
+  let winners = [];
+  if (result.results && typeof result.results === "object") {
+    // Group-wise format
+    for (const groupData of Object.values(result.results)) {
+      if (groupData.topWinners && Array.isArray(groupData.topWinners)) {
+        winners.push(...groupData.topWinners);
+      }
+    }
+  } else if (result.topWinners && Array.isArray(result.topWinners)) {
+    // Legacy format
+    winners = result.topWinners;
+  } else if (Array.isArray(result.winners)) {
+    // Fallback
+    winners = result.winners;
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/70 p-4 backdrop-blur-sm">
@@ -98,6 +117,7 @@ const DetailedResultModal = ({ result, onClose }) => {
                     <th className="px-4 py-4">প্রতিষ্ঠান</th>
                     <th className="px-4 py-4">ক্লাস</th>
                     <th className="px-4 py-4">রোল</th>
+                    <th className="px-4 py-4">মোবাইল নম্বর</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -119,17 +139,22 @@ const DetailedResultModal = ({ result, onClose }) => {
                           {winner.schoolName || "—"}
                         </td>
                         <td className="px-4 py-4 align-top text-sm text-slate-600">
-                          {winner.className || "—"}
+                          {classToBengali(winner.className) || "—"}
                         </td>
                         <td className="px-4 py-4 align-top text-sm text-slate-600">
-                          {winner.roll || winner.rollNumber || "—"}
+                          {englishToBengaliNumerals(
+                            winner.roll || winner.rollNumber,
+                          ) || "—"}
+                        </td>
+                        <td className="px-4 py-4 align-top text-sm text-slate-600">
+                          {winner.phoneNumber || winner.mobileNumber || "—"}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
                       <td
-                        colSpan="5"
+                        colSpan="6"
                         className="px-4 py-12 text-center text-slate-500"
                       >
                         কোনো বিজয়ী নেই
