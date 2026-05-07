@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaArrowLeft } from "react-icons/fa";
+import { IoIosShareAlt, IoMdDownload } from "react-icons/io";
 import { Link, useParams } from "react-router-dom";
 import logo from "../assets/logo3.jpg";
 import axios from "../utils/axios";
@@ -173,8 +174,8 @@ const PublishedResult = () => {
           }}
         >
           {/* Card Header */}
-          <div className="bg-purple-100 border-b-2 border-slate-300  p-4 md:p-8 md:rounded-t-2xl">
-            <div className="space-y-2 md:space-y-3 text-center">
+          <div className="bg-purple-100  border-slate-300  p-2 md:p-8 md:rounded-t-2xl">
+            <div className="space-y-1 md:space-y-3 text-center">
               <h1 className="text-xl text-center font-normal md:font-medium text-slate-900 md:text-4xl tiro">
                 {result.quizId?.title || "ফলাফল"}
               </h1>
@@ -208,7 +209,7 @@ const PublishedResult = () => {
               {groupedWinners.map((group) => (
                 <div
                   key={group.groupName}
-                  className="bg-green-200 py-1 md:py-2  px-2 md:px-8 border-b border-slate-300"
+                  className="bg-slate-100 py-4  px-2 md:px-8 border-b border-slate-300"
                 >
                   {/* Group Header with Class */}
                   <div className="mb-1 flex items-center justify-between">
@@ -226,7 +227,7 @@ const PublishedResult = () => {
                   </div>
 
                   {/* Winners List */}
-                  <ul className="space-y-1">
+                  <ul className="space-y-1 md:space-y-2">
                     {group.winners.map((winner, idx) => (
                       <li
                         key={`${group.groupName}-${idx}`}
@@ -234,7 +235,7 @@ const PublishedResult = () => {
                       >
                         {/* Rank Badge */}
                         <div
-                          className="flex p-1  items-center justify-center rounded-full text-sm font-white text-purple-700 noto bg-purple-200 mr-1"
+                          className="flex p-0.5  items-center justify-center rounded-full text-sm font-white text-purple-700 noto bg-purple-200 mr-2 md:mr-4"
                           // style={{
                           //   backgroundColor:
                           //     idx === 0
@@ -256,14 +257,16 @@ const PublishedResult = () => {
                         </div>
 
                         {/* Winner Info */}
-                        <div className="flex flex-col md:flex-row md:items-center justify-between w-full ">
-                          <div className="text-sm text-slate-900 tiro ">
-                            {winner.studentName || "—"}
+                        <div className="flex flex-row items-center justify-between w-full space-y-1">
+                          <div className="flex flex-col md:flex-row md:items-center flex-grow">
+                            <div className="text-sm text-slate-900 min-w-44 md:min-w-48 noto">
+                              {winner.studentName || "—"}
+                            </div>
+                            <div className="text-xs font-semibold text-slate-600  tiro ">
+                              {winner.schoolName || "প্রতিষ্ঠান নেই"}
+                            </div>
                           </div>
-                          <div className="text-xs font-semibold text-slate-600 noto">
-                            {winner.schoolName || "প্রতিষ্ঠান নেই"}
-                          </div>
-                          <div className="flex gap-2">
+                          <div className="flex flex-col md:flex-row md:gap-2">
                             <div className="text-xs font-semibold text-slate-600 noto">
                               {classToBengali(winner.className) || "শ্রেণী নেই"}
                             </div>
@@ -281,18 +284,22 @@ const PublishedResult = () => {
               ))}
             </div>
           </div>
-          <div className="flex justify-center py-2 bg-purple-100">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full">
+          <div className="flex justify-center py-2 bg-purple-100 md:rounded-b-2xl">
+            <div className="flex items-center gap-2">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full">
                 <img
                   className="rounded-full overflow-hidden"
                   src={logo}
                   alt=""
                 />
               </div>
-              <div className="flex flex-col  text-center tiro">
-                <h2 className="noto">কিশোরকণ্ঠ পাঠক ফোরাম</h2>
-                <h3 className="noto">চট্টগ্রাম মহানগর উত্তর</h3>
+              <div className="flex flex-col text-center space-y-[-7px]">
+                <h2 className="noto text-base md:text-lg font-normal mdfont-medium ">
+                  কিশোরকণ্ঠ পাঠক ফোরাম
+                </h2>
+                <h3 className="noto text-sm md:text-base font-light md:font-normal">
+                  চট্টগ্রাম মহানগর উত্তর
+                </h3>
               </div>
             </div>
           </div>
@@ -300,27 +307,29 @@ const PublishedResult = () => {
           {/* Card Footer - Action Buttons */}
         </section>
       </div>
-      <div className="border-t-2 border-slate-300 pt-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+      <div className="border-t-2 border-slate-300 px-2 md:px-4 py-4">
+        <div className="flex md:gap-3 justify-between md:justify-end">
           <button
             onClick={handleDownloadPNG}
             disabled={downloading}
-            className="px-6 py-2 font-semibold text-white rounded-lg"
+            className="btn px-6 py-2 font-semibold text-white rounded-lg"
             style={{
               backgroundColor: "#2563eb",
             }}
           >
-            {downloading ? "ডাউনলোড হচ্ছে..." : "ডাউনলোড করুন"}
+            {downloading ? "ডাউনলোড হচ্ছে..." : "ডাউনলোড"}
+            <IoMdDownload />
           </button>
           <button
             onClick={handleShare}
-            className="px-6 py-2 font-semibold rounded-lg"
+            className="btn px-6 py-2 font-semibold rounded-lg"
             style={{
               backgroundColor: copied ? "#16a34a" : "#cbd5e1",
               color: copied ? "white" : "#1e293b",
             }}
           >
-            {copied ? "কপি হয়েছে" : "শেয়ার করুন"}
+            {copied ? "কপি হয়েছে" : "শেয়ার"}
+            <IoIosShareAlt />
           </button>
         </div>
       </div>
