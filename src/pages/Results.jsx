@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaArrowRight, FaCalendarAlt, FaMedal, FaSync } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import NoticeMarquee from "../components/NoticeMarquee";
@@ -42,21 +42,9 @@ const Results = () => {
   const [error, setError] = useState("");
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    fetchResults();
-
-    // Auto-refetch when window regains focus (user switches back to tab)
-    const handleFocus = () => {
-      fetchResults();
-    };
-
-    window.addEventListener("focus", handleFocus);
-    return () => window.removeEventListener("focus", handleFocus);
-  }, []);
-
-  const fetchResults = async () => {
+  const fetchResults = useCallback(async (showLoading = true) => {
     try {
-      if (!refreshing) setLoading(true);
+      if (showLoading) setLoading(true);
       const response = await axios.get("/api/published-results");
 
       console.log("Published results response:", response.data); // Debug log
@@ -88,11 +76,23 @@ const Results = () => {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchResults();
+
+    // Auto-refetch when window regains focus (user switches back to tab)
+    const handleFocus = () => {
+      fetchResults();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [fetchResults]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await fetchResults();
+    await fetchResults(true);
   };
 
   // Helper function to get winner info from different data structures
@@ -187,6 +187,33 @@ const Results = () => {
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
                         Result Board
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-2xl bg-slate-50 p-4">
+                      <p className="text-xs text-slate-500">মোট ফলাফল</p>
+                      <p className="mt-2 text-xl font-black text-slate-900">
+                        {results.length}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 p-4">
+                      <p className="text-xs text-slate-500">মোট বিজয়ী</p>
+                      <p className="mt-2 text-xl font-black text-slate-900">
+                        {englishToBengaliNumerals(totalWinners)}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 p-4">
+                      <p className="text-xs text-slate-500">সর্বশেষ প্রকাশ</p>
+                      <p className="mt-2 text-sm font-semibold text-slate-700">
+                        {latestPublishedAt
+                          ? latestPublishedAt.toLocaleDateString("bn-BD", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })
+                          : "—"}
                       </p>
                     </div>
                   </div>
