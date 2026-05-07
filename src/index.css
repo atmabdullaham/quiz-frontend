@@ -25,3 +25,11 @@ html,
 body {
   font-family: "Hind Siliguri", "Inter", sans-serif;
 }
+
+.noto {
+  font-family: "Noto Sans Bengali", sans-serif;
+}
+
+.tiro {
+  font-family: "Tiro Bangla", serif;
+}

@@ -1,8 +1,7 @@
 /**
  * Download HTML element as PNG image
- * Requires: npm install html2canvas
+ * Requires: npm install html-to-image
  */
-const FONT_STYLESHEET_HOSTS = ["fonts.googleapis.com", "fonts.gstatic.com"];
 
 const waitForDocumentFonts = async () => {
   if (typeof document === "undefined" || !document.fonts?.ready) return;
@@ -26,97 +25,44 @@ const waitForNextPaint = () =>
     });
   });
 
-const isFontStylesheet = (href = "") =>
-  FONT_STYLESHEET_HOSTS.some((host) => href.includes(host));
-
-const cleanCloneForExport = (clonedDocument) => {
-  const links = clonedDocument.querySelectorAll('link[rel="stylesheet"]');
-  links.forEach((link) => {
-    const href = link.getAttribute("href") || "";
-    if (!isFontStylesheet(href)) {
-      link.remove();
-    }
-  });
-
-  const styles = clonedDocument.querySelectorAll("style");
-  styles.forEach((styleTag) => {
-    const cssText = styleTag.textContent || "";
-    if (
-      cssText.includes("oklch(") ||
-      cssText.includes("color-mix(") ||
-      cssText.includes("lab(") ||
-      cssText.includes("lch(")
-    ) {
-      styleTag.remove();
-    }
-  });
-
-  const bodyEl = clonedDocument.body;
-  if (!bodyEl) return;
-
-  bodyEl.removeAttribute("class");
-  bodyEl.removeAttribute("style");
-
-  const walker = clonedDocument.createTreeWalker(
-    bodyEl,
-    NodeFilter.SHOW_ELEMENT,
-    null,
-    false,
-  );
-
-  let node = walker.nextNode();
-  while (node) {
-    node.removeAttribute("class");
-    node.removeAttribute("data-class");
-    node = walker.nextNode();
-  }
-};
-
-const createCanvasOptions = () => ({
-  backgroundColor: "#ffffff",
-  scale: 2,
-  useCORS: true,
-  allowTaint: true,
-  logging: false,
-  removeContainer: true,
-  ignoreElements: (el) => {
-    if (!el) return false;
-    const tag = el.tagName?.toLowerCase();
-    return tag === "script" || tag === "meta" || tag === "noscript";
-  },
-  onclone: cleanCloneForExport,
-});
-
 export const downloadPNG = async (element, fileName = "result.png") => {
   try {
-    // Dynamic import of html2canvas
-    const html2canvas = (await import("html2canvas")).default;
+    // Dynamic import of html-to-image
+    const { toPng } = await import("html-to-image");
 
+    // Wait for fonts and next paint
     await waitForDocumentFonts();
     await waitForNextPaint();
 
-    // Create canvas from element with stable options
-    const canvas = await html2canvas(element, createCanvasOptions());
+    // Convert element to PNG with improved settings
+    const dataUrl = await toPng(element, {
+      cacheBust: true,
+      pixelRatio: 2,
+      backgroundColor: "#ffffff",
+      width: element.offsetWidth,
+      height: element.offsetHeight,
+    });
 
-    // Convert canvas to blob and download
-    canvas.toBlob((blob) => {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }, "image/png");
+    // Create blob from data URL and download
+    const response = await fetch(dataUrl);
+    const blob = await response.blob();
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   } catch (error) {
     console.error("Error downloading PNG:", error);
     if (
       error.message.includes("Cannot find module") ||
-      error.toString().includes("html2canvas")
+      error.toString().includes("html-to-image")
     ) {
       throw new Error(
-        "html2canvas লাইব্রেরি ইনস্টল করতে হবে: npm install html2canvas"
+        "html-to-image লাইব্রেরি ইনস্টল করতে হবে: npm install html-to-image"
       );
     }
     throw error;
@@ -125,31 +71,53 @@ export const downloadPNG = async (element, fileName = "result.png") => {
 
 /**
  * Download HTML element as PDF
- * Requires: npm install jspdf html2canvas
+ * Requires: npm install jspdf html-to-image
  */
 export const downloadPDF = async (element, fileName = "result.pdf") => {
   try {
-    const html2canvas = (await import("html2canvas")).default;
+    const { toPng } = await import("html-to-image");
     const jsPDF = (await import("jspdf")).jsPDF;
 
     await waitForDocumentFonts();
     await waitForNextPaint();
 
-    const canvas = await html2canvas(element, createCanvasOptions());
-
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF({
-      orientation: "landscape",
-      unit: "mm",
-      format: "a4",
+    // Convert element to PNG first
+    const dataUrl = await toPng(element, {
+      cacheBust: true,
+      pixelRatio: 2,
+      backgroundColor: "#ffffff",
+      width: element.offsetWidth,
+      height: element.offsetHeight,
     });
 
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const imgWidth = pdfWidth;
-    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+    // Get image dimensions
+    const img = new Image();
+    img.src = dataUrl;
 
-    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-    pdf.save(fileName);
+    img.onload = () => {
+      const pdf = new jsPDF({
+        orientation: img.width > img.height ? "landscape" : "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pdfWidth;
+      const imgHeight = (img.height * pdfWidth) / img.width;
+
+      if (imgHeight > pdfHeight) {
+        // Image is taller than page, scale down
+        const scale = pdfHeight / imgHeight;
+        const scaledWidth = imgWidth * scale;
+        const scaledHeight = pdfHeight;
+        pdf.addImage(dataUrl, "PNG", (pdfWidth - scaledWidth) / 2, 0, scaledWidth, scaledHeight);
+      } else {
+        pdf.addImage(dataUrl, "PNG", 0, 0, imgWidth, imgHeight);
+      }
+
+      pdf.save(fileName);
+    };
   } catch (error) {
     console.error("Error downloading PDF:", error);
     throw error;
