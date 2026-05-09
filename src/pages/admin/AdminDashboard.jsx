@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaChartBar, FaFileAlt, FaNewspaper, FaUsers } from "react-icons/fa";
+import { GiDiamondRing } from "react-icons/gi";
 import { MdQuiz } from "react-icons/md";
 import DashboardSummary from "../../components/DashboardSummary";
 import NoticeManager from "../../components/NoticeManager";
@@ -7,6 +8,7 @@ import QuizzesSection from "../../components/QuizzesSection";
 import ResultsSection from "../../components/ResultsSection";
 import StudentsSection from "../../components/StudentsSection";
 import { useAuth } from "../../context/AuthContext";
+import MembershipRequests from "./MembershipRequests";
 
 const AdminDashboard = () => {
   const { dbUser } = useAuth();
@@ -43,6 +45,12 @@ const AdminDashboard = () => {
       label: "শিক্ষার্থী",
       icon: <FaUsers className="text-lg" />,
       component: <StudentsSection />,
+    },
+    {
+      id: "membership",
+      label: "সদস্যপদ",
+      icon: <GiDiamondRing className="text-lg" />,
+      component: <MembershipRequests />,
     },
     {
       id: "notice",

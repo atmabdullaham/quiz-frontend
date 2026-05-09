@@ -65,7 +65,7 @@ const QuickAction = () => {
               </Link>
 
               <Link
-                to="/login"
+                to="/membership"
                 className="flex-1 md:flex-none btn px-4 py-3 rounded-xl  bg-purple-600 text-white border-purple-600 font-semibold"
               >
                 সদস্য হও

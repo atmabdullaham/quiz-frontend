@@ -6,6 +6,8 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Home from "./pages/Home";
 import Leaderboard from "./pages/Leaderboard";
 import Login from "./pages/Login";
+import MembershipApplication from "./pages/MembershipApplication";
+import MembershipDeclaration from "./pages/MembershipDeclaration";
 import PreQuizForm from "./pages/PreQuizForm";
 import PublishedResult from "./pages/PublishedResult";
 import QuizList from "./pages/QuizList";
@@ -19,6 +21,7 @@ import AdminDebug from "./pages/admin/AdminDebug2";
 import AdminSetup from "./pages/admin/AdminSetup";
 import CreateQuiz from "./pages/admin/CreateQuiz";
 import EditQuiz from "./pages/admin/EditQuiz";
+import MembershipRequests from "./pages/admin/MembershipRequests";
 import QuizStats from "./pages/admin/QuizStats";
 
 function AppContent() {
@@ -73,6 +76,13 @@ function AppContent() {
           />
           <Route path="/admin/result-preview" element={<ResultCardPreview />} />
 
+          {/* Membership Routes */}
+          <Route path="/membership" element={<MembershipApplication />} />
+          <Route
+            path="/membership/declaration"
+            element={<MembershipDeclaration />}
+          />
+
           {/* Dashboard Routes */}
           <Route
             path="/dashboard"
@@ -86,7 +96,7 @@ function AppContent() {
                     role: dbUser?.role,
                     roleType: typeof dbUser?.role,
                     isAdmin: dbUser?.role === "admin",
-                    email: dbUser?.email
+                    email: dbUser?.email,
                   });
                   return dbUser.role === "admin" ? (
                     <AdminDashboard />
@@ -126,13 +136,17 @@ function AppContent() {
             }
           />
           <Route
-            path="/admin/setup"
-            element={<AdminSetup />}
+            path="/admin/membership"
+            element={
+              dbUser?.role === "admin" ? (
+                <MembershipRequests />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
           />
-          <Route
-            path="/admin/debug"
-            element={<AdminDebug />}
-          />
+          <Route path="/admin/setup" element={<AdminSetup />} />
+          <Route path="/admin/debug" element={<AdminDebug />} />
         </Routes>
       </div>
       {/* Show Footer on all pages except dashboard */}

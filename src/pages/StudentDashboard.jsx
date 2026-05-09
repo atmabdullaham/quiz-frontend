@@ -2,8 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import {
-  FaBookOpen,
-  FaCalendarAlt,
   FaCheck,
   FaEdit,
   FaEnvelope,
@@ -13,11 +11,8 @@ import {
   FaTimes,
   FaUserCircle,
 } from "react-icons/fa";
-import {
-  MdOutlineArrowOutward,
-  MdOutlineLeaderboard,
-  MdOutlineQuiz,
-} from "react-icons/md";
+import { GiDiamondRing } from "react-icons/gi";
+import { MdOutlineArrowOutward } from "react-icons/md";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "../utils/axios";
@@ -69,6 +64,15 @@ const StudentDashboard = () => {
     queryKey: ["student-results"],
     queryFn: async () => {
       const { data } = await axios.get("/api/published-results");
+      return data;
+    },
+    enabled: !!dbUser,
+  });
+
+  const { data: membershipData = {} } = useQuery({
+    queryKey: ["user-membership"],
+    queryFn: async () => {
+      const { data } = await axios.get("/api/user/membership");
       return data;
     },
     enabled: !!dbUser,
@@ -142,6 +146,28 @@ const StudentDashboard = () => {
     }));
   };
 
+  // Convert membership status to Bengali
+  const getMembershipStatusBengali = (status) => {
+    const statusMap = {
+      inactive: "সক্রিয় নয়",
+      pending: "অনুমোদনের অপেক্ষায়",
+      active: "সদস্য",
+      rejected: "প্রত্যাখ্যাত",
+    };
+    return statusMap[status] || "তথ্য উপলব্ধ নয়";
+  };
+
+  // Get status color
+  const getStatusColor = (status) => {
+    const colorMap = {
+      inactive: "badge-neutral",
+      pending: "badge-warning",
+      active: "badge-success",
+      rejected: "badge-error",
+    };
+    return colorMap[status] || "badge-neutral";
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900">
@@ -159,17 +185,6 @@ const StudentDashboard = () => {
     return <Navigate to="/login" replace />;
   }
 
-  const activeQuizzes = quizzes.filter(
-    (quiz) => quiz.status === "active",
-  ).length;
-  const upcomingQuizzes = quizzes.filter(
-    (quiz) => quiz.status === "scheduled",
-  ).length;
-  const availableQuizzes = quizzes.filter(
-    (quiz) => quiz.status !== "draft",
-  ).length;
-  const publishedResults = results.length;
-
   const profileFields = [
     profile.studentName,
     profile.schoolName,
@@ -181,41 +196,6 @@ const StudentDashboard = () => {
   const profileCompletion = Math.round(
     (profileFields.filter(Boolean).length / profileFields.length) * 100,
   );
-
-  const quickStats = [
-    {
-      label: "Available Quizzes",
-      value: availableQuizzes,
-      icon: <MdOutlineQuiz className="text-3xl" />,
-      color: "from-indigo-500 to-indigo-600",
-      bgColor: "bg-indigo-100",
-      textColor: "text-indigo-600",
-    },
-    {
-      label: "Active Now",
-      value: activeQuizzes,
-      icon: <FaBookOpen className="text-3xl" />,
-      color: "from-emerald-500 to-emerald-600",
-      bgColor: "bg-emerald-100",
-      textColor: "text-emerald-600",
-    },
-    {
-      label: "Upcoming",
-      value: upcomingQuizzes,
-      icon: <FaCalendarAlt className="text-3xl" />,
-      color: "from-amber-500 to-amber-600",
-      bgColor: "bg-amber-100",
-      textColor: "text-amber-600",
-    },
-    {
-      label: "Published Results",
-      value: publishedResults,
-      icon: <MdOutlineLeaderboard className="text-3xl" />,
-      color: "from-purple-500 to-purple-600",
-      bgColor: "bg-purple-100",
-      textColor: "text-purple-600",
-    },
-  ];
 
   if (profileLoading || quizzesLoading || resultsLoading) {
     return (
@@ -567,8 +547,38 @@ const StudentDashboard = () => {
               <InfoRow
                 icon={FaSchool}
                 label="Institution"
-                value={profile.schoolName || "Not set yet"}
+                value={profile.schoolName || "Not provided yet"}
               />
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-gray-50 border border-gray-100">
+                <div className="p-2 rounded-xl bg-white border border-gray-200 text-gray-500 flex-shrink-0">
+                  <GiDiamondRing />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[10px] sm:text-xs uppercase tracking-wide text-gray-500 font-semibold">
+                    সদস্যপদ
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-sm sm:text-base text-gray-900 font-medium">
+                      {getMembershipStatusBengali(
+                        membershipData.membership?.status,
+                      )}
+                    </p>
+                    <span
+                      className={`badge badge-sm ${getStatusColor(membershipData.membership?.status)}`}
+                    >
+                      {membershipData.membership?.status || "N/A"}
+                    </span>
+                  </div>
+                  {membershipData.membership?.membershipDate && (
+                    <p className="text-xs text-gray-600 mt-2">
+                      সদস্য হওয়ার তারিখ:{" "}
+                      {new Date(
+                        membershipData.membership.membershipDate,
+                      ).toLocaleDateString("bn-BD")}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* <div className="mt-8 p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">

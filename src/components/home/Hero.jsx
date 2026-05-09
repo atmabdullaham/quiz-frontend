@@ -45,7 +45,7 @@ const Hero = () => {
                 <MdOutlineArrowOutward className="text-sm md:text-lg" />
               </Link>
               <Link
-                to="/login"
+                to="/membership"
                 className="btn px-4 py-3 rounded-xl  bg-purple-600 text-white border-purple-600 font-semibold"
               >
                 সদস্য হও
