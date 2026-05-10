@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { FaArrowRight, FaCalendarAlt, FaMedal, FaSync } from "react-icons/fa";
+import { FaArrowRight, FaCalendarAlt, FaMedal } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import NoticeMarquee from "../components/NoticeMarquee";
 import axios from "../utils/axios";
@@ -153,70 +153,16 @@ const Results = () => {
         <div className="absolute -top-20 right-0 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-20 left-0 h-72 w-72 rounded-full bg-sky-200/20 blur-3xl" />
 
-        <div className="container mx-auto px-4 py-16 md:py-20 relative">
+        <div className="container mx-auto px-4 py-8 md:py-14 relative">
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="hidden sm:flex h-16 w-16 items-center justify-center rounded-3xl bg-white/15 text-3xl shadow-lg shadow-blue-950/20">
-                  <FaMedal />
-                </div>
+              <div className="flex items-center  gap-4">
+                <FaMedal className="text-2xl md:text-3xl" />
+
                 <div>
-                  <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight">
+                  <h1 className="text-2xl md:text-3xl font-black leading-tight tracking-tight tiro">
                     ফলাফল
                   </h1>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-center lg:justify-end gap-3">
-              <button
-                onClick={handleRefresh}
-                disabled={loading || refreshing}
-                className="h-14 w-14 rounded-2xl bg-white/15 backdrop-blur-2xl border border-white/20 text-white hover:bg-white/25 transition-all disabled:opacity-50 flex items-center justify-center shadow-lg"
-                title="ফলাফল রিফ্রেশ করুন"
-              >
-                <FaSync className={refreshing ? "animate-spin" : ""} />
-              </button>
-
-              <div className="w-full max-w-md rounded-[2rem] border border-white/15 bg-white/10 p-6 backdrop-blur-2xl shadow-[0_30px_80px_rgba(15,23,42,0.25)]">
-                <div className="rounded-[1.75rem] bg-white p-6 text-slate-900 shadow-xl">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg">
-                      <FaMedal className="text-2xl" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
-                        Result Board
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl bg-slate-50 p-4">
-                      <p className="text-xs text-slate-500">মোট ফলাফল</p>
-                      <p className="mt-2 text-xl font-black text-slate-900">
-                        {results.length}
-                      </p>
-                    </div>
-                    <div className="rounded-2xl bg-slate-50 p-4">
-                      <p className="text-xs text-slate-500">মোট বিজয়ী</p>
-                      <p className="mt-2 text-xl font-black text-slate-900">
-                        {englishToBengaliNumerals(totalWinners)}
-                      </p>
-                    </div>
-                    <div className="rounded-2xl bg-slate-50 p-4">
-                      <p className="text-xs text-slate-500">সর্বশেষ প্রকাশ</p>
-                      <p className="mt-2 text-sm font-semibold text-slate-700">
-                        {latestPublishedAt
-                          ? latestPublishedAt.toLocaleDateString("bn-BD", {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            })
-                          : "—"}
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

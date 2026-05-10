@@ -209,8 +209,8 @@ const MembershipDeclaration = () => {
               <p className="text-sm text-blue-900 flex items-start gap-2">
                 <span className="text-base mt-0.5">ℹ️</span>
                 <span>
-                  আপনার আবেদন জমা হওয়ার পর প্রশাসক দ্বারা পর্যালোচনা করা হবে।
-                  আপনি শীঘ্রই ফলাফল জানতে পারবেন।
+                  তোমার আবেদন পর্যালোচনা করা হবে। আপনি শীঘ্রই ফলাফল জানতে
+                  পারবেন।
                 </span>
               </p>
             </div>

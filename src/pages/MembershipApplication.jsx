@@ -43,6 +43,15 @@ const MembershipApplication = () => {
     address: "",
   });
 
+  const [originalProfileData, setOriginalProfileData] = useState({
+    studentName: "",
+    schoolName: "",
+    className: "",
+    rollNumber: "",
+    mobileNumber: "",
+    address: "",
+  }); // Track original profile to detect changes
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -79,6 +88,7 @@ const MembershipApplication = () => {
   useEffect(() => {
     if (authenticatedProfile && dbUser?.email) {
       setStudentInfo(authenticatedProfile);
+      setOriginalProfileData(authenticatedProfile);
     }
   }, [authenticatedProfile, dbUser?.email]);
 
@@ -104,6 +114,42 @@ const MembershipApplication = () => {
     return Object.values(newErrors).every((error) => !error);
   };
 
+  // Check if profile data has changed (with type-safe comparison)
+  // Returns false if originalProfileData is still in initial state (not loaded yet)
+  const hasProfileChanged = () => {
+    // Safety check: if originalProfileData is empty and hasn't been initialized, return false
+    const isOriginalDataEmpty =
+      !originalProfileData.studentName &&
+      !originalProfileData.schoolName &&
+      !originalProfileData.className &&
+      !originalProfileData.rollNumber &&
+      !originalProfileData.mobileNumber &&
+      !originalProfileData.address;
+
+    if (isOriginalDataEmpty) {
+      return true; // Allow update if no original data loaded yet
+    }
+
+    // Normalize values for comparison (trim strings, convert to same type)
+    const normalize = (val) => {
+      return String(val || "").trim();
+    };
+
+    return (
+      normalize(studentInfo.studentName) !==
+        normalize(originalProfileData.studentName) ||
+      normalize(studentInfo.schoolName) !==
+        normalize(originalProfileData.schoolName) ||
+      normalize(studentInfo.className) !==
+        normalize(originalProfileData.className) ||
+      normalize(studentInfo.rollNumber) !==
+        normalize(originalProfileData.rollNumber) ||
+      normalize(studentInfo.mobileNumber) !==
+        normalize(originalProfileData.mobileNumber) ||
+      normalize(studentInfo.address) !== normalize(originalProfileData.address)
+    );
+  };
+
   const handleNext = async (e) => {
     e.preventDefault();
 
@@ -115,17 +161,19 @@ const MembershipApplication = () => {
     setIsSubmitting(true);
 
     try {
-      // Update profile on backend if changed
-      await axios.put("/api/user/profile", {
-        studentName: studentInfo.studentName,
-        schoolName: studentInfo.schoolName,
-        className: studentInfo.className,
-        rollNumber: studentInfo.rollNumber,
-        mobileNumber: studentInfo.mobileNumber,
-        address: studentInfo.address,
-      });
+      // Only update profile on backend if data has changed
+      if (hasProfileChanged()) {
+        await axios.put("/api/user/profile", {
+          studentName: studentInfo.studentName,
+          schoolName: studentInfo.schoolName,
+          className: studentInfo.className,
+          rollNumber: studentInfo.rollNumber,
+          mobileNumber: studentInfo.mobileNumber,
+          address: studentInfo.address,
+        });
 
-      toast.success("প্রোফাইল আপডেট করা হয়েছে!");
+        toast.success("প্রোফাইল আপডেট করা হয়েছে!");
+      }
 
       // Store in sessionStorage and navigate to declaration
       sessionStorage.setItem("membershipData", JSON.stringify(studentInfo));
