@@ -100,9 +100,9 @@ const MembershipDeclaration = () => {
           </div>
 
           {/* Declaration Content */}
-          <div className="p-6 md:p-10 space-y-6">
+          <div className=" md:p-10 space-y-6">
             {/* Declaration Box */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-indigo-200 rounded-2xl p-6 md:p-8 space-y-4">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-indigo-200 md:rounded-2xl p-6 md:p-8 space-y-4">
               <h3 className="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
                 <span className="text-2xl">📋</span>
                 কিশোরকণ্ঠ পাঠক ফোরাম - সদস্যপদ ঘোষণা
@@ -125,12 +125,10 @@ const MembershipDeclaration = () => {
                   <li>অন্যান্য সদস্যের প্রতি সম্মান ও শ্রদ্ধা বজায় রাখা</li>
                   <li>প্ল্যাটফর্মের নিয়ম কানুন মেনে চলা</li>
                   <li>কোনো প্রকার অনৈতিক কাজে জড়িত না হওয়া</li>
-                  <li>
-                    প্রদত্ত ব্যক্তিগত তথ্য সঠিক ও বাস্তব হওয়া নিশ্চিত করা
-                  </li>
+                  <li>নৈতিকতা ও আদর্শ রক্ষা</li>
                 </ul>
 
-                <p className="text-base leading-relaxed">
+                {/* <p className="text-base leading-relaxed">
                   <strong>সদস্যরা পাবেন:</strong>
                 </p>
 
@@ -139,7 +137,7 @@ const MembershipDeclaration = () => {
                   <li>শিক্ষা সামগ্রী এবং সংস্থানে বিশেষ প্রবেশাধিকার</li>
                   <li>সম্প্রদায়ের সাথে সংযোগ স্থাপনের সুযোগ</li>
                   <li>নিয়মিত আপডেট এবং ঘোষণা</li>
-                </ul>
+                </ul> */}
 
                 <p className="text-base leading-relaxed mt-4">
                   আমরা যেকোনো সময় নিয়ম লঙ্ঘনকারী সদস্যদের সদস্যপদ বাতিল করার
@@ -168,8 +166,9 @@ const MembershipDeclaration = () => {
               />
               <label htmlFor="accept-terms" className="cursor-pointer">
                 <span className="text-sm md:text-base text-gray-700">
-                  আমি উপরোক্ত ঘোষণা ও শর্তাবলী পড়েছি এবং সম্পূর্ণভাবে গ্রহণ
-                  করছি। আমার প্রদত্ত সকল তথ্য সত্য এবং যাচাইকৃত।
+                  আমি উপরে বর্ণিত লক্ষ্য, উদ্দেশ্য ও দায়িত্বসমূহ মনোযোগ দিয়ে
+                  পড়েছি এবং তা মেনে চলার অঙ্গীকার করছি। আমার প্রদত্ত সকল তথ্য
+                  সত্য।
                 </span>
               </label>
             </div>
@@ -209,8 +208,9 @@ const MembershipDeclaration = () => {
               <p className="text-sm text-blue-900 flex items-start gap-2">
                 <span className="text-base mt-0.5">ℹ️</span>
                 <span>
-                  তোমার আবেদন পর্যালোচনা করা হবে। আপনি শীঘ্রই ফলাফল জানতে
-                  পারবেন।
+                  সদস্যপদ প্রক্রিয়া সম্পন্ন হতে ১-২ কার্যদিবস সময় লাগতে পারে।
+                  আপনার আবেদন পর্যালোচনা করা হবে এবং অনুমোদিত হলে আপনাকে ইমেইল ও
+                  ড্যাশবোর্ডে নোটিফিকেশন পাঠানো হবে।
                 </span>
               </p>
             </div>
