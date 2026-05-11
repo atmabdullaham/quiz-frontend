@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Footer from "./components/Footer";
 import Loader from "./components/Loader";
 import Navbar from "./components/Navbar";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Home from "./pages/Home";
 import Leaderboard from "./pages/Leaderboard";
@@ -27,11 +28,6 @@ import QuizStats from "./pages/admin/QuizStats";
 function AppContent() {
   const { dbUser, loading } = useAuth();
   const location = useLocation();
-
-  console.log("🔍 App Debug - dbUser:", dbUser);
-  console.log("🔍 App Debug - dbUser?.role:", dbUser?.role);
-  console.log("🔍 App Debug - loading:", loading);
-  console.log("🔍 App Debug - Current path:", location.pathname);
 
   // Check if current route is a dashboard route
   const isDashboardRoute =
@@ -91,15 +87,10 @@ function AppContent() {
                 <Navigate to="/login" />
               ) : (
                 (() => {
-                  console.log("🔀 /dashboard route check:", {
-                    hasDbUser: !!dbUser,
-                    role: dbUser?.role,
-                    roleType: typeof dbUser?.role,
-                    isAdmin: dbUser?.role === "admin",
-                    email: dbUser?.email,
-                  });
                   return dbUser.role === "admin" ? (
-                    <AdminDashboard />
+                    <ProtectedAdminRoute>
+                      <AdminDashboard />
+                    </ProtectedAdminRoute>
                   ) : (
                     <StudentDashboard />
                   );
@@ -110,39 +101,41 @@ function AppContent() {
           <Route
             path="/admin"
             element={
-              dbUser?.role === "admin" ? (
+              <ProtectedAdminRoute>
                 <AdminDashboard />
-              ) : (
-                <Navigate to="/" />
-              )
+              </ProtectedAdminRoute>
             }
           />
           <Route
             path="/admin/quiz/create"
             element={
-              dbUser?.role === "admin" ? <CreateQuiz /> : <Navigate to="/" />
+              <ProtectedAdminRoute>
+                <CreateQuiz />
+              </ProtectedAdminRoute>
             }
           />
           <Route
             path="/admin/quiz/:id/edit"
             element={
-              dbUser?.role === "admin" ? <EditQuiz /> : <Navigate to="/" />
+              <ProtectedAdminRoute>
+                <EditQuiz />
+              </ProtectedAdminRoute>
             }
           />
           <Route
             path="/admin/quiz/:id/stats"
             element={
-              dbUser?.role === "admin" ? <QuizStats /> : <Navigate to="/" />
+              <ProtectedAdminRoute>
+                <QuizStats />
+              </ProtectedAdminRoute>
             }
           />
           <Route
             path="/admin/membership"
             element={
-              dbUser?.role === "admin" ? (
+              <ProtectedAdminRoute>
                 <MembershipRequests />
-              ) : (
-                <Navigate to="/" />
-              )
+              </ProtectedAdminRoute>
             }
           />
           <Route path="/admin/setup" element={<AdminSetup />} />

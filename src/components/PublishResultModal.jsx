@@ -116,7 +116,6 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
       setCandidates(mapped);
       setError("");
     } catch (err) {
-      console.error("Error preparing results:", err);
       const errorMsg =
         err.response?.data?.message ||
         err.message ||
@@ -243,8 +242,6 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
         },
       };
 
-      console.log("Publishing all groups:", payload);
-
       const response = await axios.post(
         `/api/admin/quizzes/${quizId}/publish-results`,
         payload,
@@ -256,7 +253,6 @@ const PublishResultModal = ({ quizId, quizTitle, onClose, onPublished }) => {
       }
       onClose();
     } catch (err) {
-      console.error("Publish error:", err);
       Toast.error(err.response?.data?.message || "ফলাফল প্রকাশ ব্যর্থ");
     } finally {
       setLoading(false);

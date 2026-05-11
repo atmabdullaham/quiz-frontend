@@ -12,12 +12,6 @@ import MembershipRequests from "./MembershipRequests";
 
 const AdminDashboard = () => {
   const { dbUser } = useAuth();
-  console.log(
-    "✅ AdminDashboard rendered for user:",
-    dbUser?.email,
-    "role:",
-    dbUser?.role,
-  );
 
   const [activeTab, setActiveTab] = useState("summary");
 

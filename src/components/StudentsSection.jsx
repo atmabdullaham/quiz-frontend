@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
-import { FaTrash, FaSearch, FaFilter } from "react-icons/fa";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { FaFilter, FaTrash } from "react-icons/fa";
 import axios from "../utils/axios";
 
 const StudentsSection = () => {
@@ -33,7 +33,6 @@ const StudentsSection = () => {
       setTotalStudents(data.totalStudents);
     } catch (err) {
       setError("শিক্ষার্থী তথ্য পেতে ব্যর্থ");
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -61,7 +60,6 @@ const StudentsSection = () => {
       }
     } catch (err) {
       toast.error("ডিলিট ব্যর্থ হয়েছে");
-      console.error(err);
     } finally {
       setDeleting(null);
     }

@@ -9,7 +9,7 @@ const AdminSetup = () => {
 
   const handleMakeAdmin = async (e) => {
     e.preventDefault();
-    
+
     if (!email.trim()) {
       toast.error("Please enter an email");
       return;
@@ -23,13 +23,14 @@ const AdminSetup = () => {
       });
 
       toast.success(`✅ User ${response.data.email} is now admin!`);
-      toast.success("They need to log out and log back in to see the admin dashboard");
+      toast.success(
+        "They need to log out and log back in to see the admin dashboard",
+      );
       setEmail("");
       setSetupToken("");
     } catch (error) {
-      console.error("Error:", error);
       toast.error(
-        error.response?.data?.message || "Failed to promote user to admin"
+        error.response?.data?.message || "Failed to promote user to admin",
       );
     } finally {
       setLoading(false);
@@ -84,8 +85,8 @@ const AdminSetup = () => {
 
         <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800">
-            <strong>Note:</strong> After promotion, the user must log out and log back in
-            to see the admin dashboard.
+            <strong>Note:</strong> After promotion, the user must log out and
+            log back in to see the admin dashboard.
           </p>
         </div>
       </div>

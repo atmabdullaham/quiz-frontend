@@ -51,14 +51,8 @@ export const AuthProvider = ({ children }) => {
             },
           );
 
-          console.log("✅ POST /auth/register returned:", data);
-          console.log("   Email:", data?.email);
-          console.log("   Role:", data?.role);
-          console.log("   All fields:", Object.keys(data || {}));
-          
           setDbUser(data);
         } catch (error) {
-          console.error("❌ Error in auth register:", error);
           toast.error("Failed to sync user data");
         }
       } else {
@@ -100,7 +94,6 @@ export const AuthProvider = ({ children }) => {
       toast.success("Logged in successfully!");
       return result.user;
     } catch (error) {
-      // console.error("Login error:", error);
       toast.error(error.message || "Failed to login");
       throw error;
     }
@@ -113,7 +106,6 @@ export const AuthProvider = ({ children }) => {
       setToken(null);
       toast.success("Logged out successfully!");
     } catch (error) {
-      // console.error("Logout error:", error);
       toast.error("Failed to logout");
     }
   };

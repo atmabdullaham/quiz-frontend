@@ -119,7 +119,7 @@ export const downloadPDF = async (element, fileName = "result.pdf") => {
       pdf.save(fileName);
     };
   } catch (error) {
-    console.error("Error downloading PDF:", error);
+
     throw error;
   }
 };

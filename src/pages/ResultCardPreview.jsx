@@ -49,7 +49,6 @@ const ResultCardPreview = () => {
       link.download = `result-card-${Date.now()}.png`;
       link.click();
     } catch (error) {
-      console.error("Download failed:", error);
       alert("Download failed. Please try again.");
     } finally {
       setIsDownloading(false);

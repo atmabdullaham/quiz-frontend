@@ -41,7 +41,6 @@ const PublishedResult = () => {
       setError("");
     } catch (err) {
       setError("ফলাফল পাওয়া যায়নি");
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -67,8 +66,6 @@ const PublishedResult = () => {
       await downloadPNG(resultCardRef.current, fileName);
       toast.success("ফলাফল PNG হিসেবে ডাউনলোড হয়েছে ✓");
     } catch (err) {
-      console.error("Download error:", err);
-
       const errorMsg = err?.message || err?.toString() || "অজানা ত্রুটি";
 
       if (errorMsg.includes("html-to-image")) {

@@ -47,8 +47,6 @@ const Results = () => {
       if (showLoading) setLoading(true);
       const response = await axios.get("/api/published-results");
 
-      console.log("Published results response:", response.data); // Debug log
-
       // Map the response data to ensure compatibility with frontend
       const mappedResults = Array.isArray(response.data)
         ? response.data.map((result) => ({
@@ -62,11 +60,9 @@ const Results = () => {
           }))
         : [];
 
-      console.log("Mapped results:", mappedResults); // Debug log
       setResults(mappedResults);
       setError("");
     } catch (err) {
-      console.error("Error fetching results:", err);
       const errorMsg =
         err.response?.data?.message ||
         err.message ||

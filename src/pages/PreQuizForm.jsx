@@ -107,7 +107,6 @@ const PreQuizForm = ({ user }) => {
     queryFn: async () => {
       // V2: Public users are no longer supported
       // All users must authenticate
-      console.log("V2: Public user support disabled");
       return null;
     },
     retry: 1,
