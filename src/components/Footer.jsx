@@ -1,6 +1,6 @@
 import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import icon from "../assets/logo3.jpg";
+import icon from "../assets/logo_2.jpg";
 
 const Footer = () => {
   return (
